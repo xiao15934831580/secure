@@ -17,7 +17,6 @@ http.interceptors.request.use(
       console.log('服务端异常！');
       return Promise.reject(config)
     }
-    // config.headers.loginClient = 'pc'
     config.headers.token = localStorage.getItem('token')
     return config
   },

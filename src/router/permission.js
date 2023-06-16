@@ -17,18 +17,4 @@ router.beforeEach((to, from, next) => {
   }else{
     next()
   }
-  // if (store.getters.token) {
-  //   if (to.path === '/login') {
-  //     next()
-  //   } else {
-  //     next()
-  //   }
-  // } else {
-  //   if (whiteList.includes(to.path)) {
-  //     next()
-  //   } else {
-  //     next('/login')
-  //   }
-  // }
-  // next()
 })

@@ -1,9 +1,4 @@
 <template>
-    <!-- <div class="homepage">
-        <NaviGation></NaviGation>
-        <AllMenus></AllMenus>
-    </div> -->
-    
      <div class="common-layout homepage">
         <el-container>
         <el-header><NaviGation></NaviGation></el-header>
@@ -19,15 +14,14 @@
 
 </template>
 <script>
-import AllMenus from './src/menus.vue';
-import NaviGation from './src/navigation.vue';
-import TagVue from './src/tag.vue';
+import AllMenus from './menus.vue';
+import NaviGation from './navigation.vue';
+import TagVue from './tag.vue';
 export default {
     name: "HomePage",
     components: {AllMenus,NaviGation,TagVue},
     data() {
         return {
-            
         };
      },
      methods: {},
