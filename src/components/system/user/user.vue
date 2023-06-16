@@ -74,7 +74,7 @@
         />
       </div>
     </div>
-  </div>
+</div>
   <!-- 编辑 -->
   <EditUser
     v-model="dialogFormVisible"

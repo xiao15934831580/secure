@@ -24,10 +24,7 @@
         initBreadcrumbList()   
     },
     { deep: true, immediate: true }
-    )
-
-
-   
+    )   
 </script>
 <style scoped>
     .BreadCrumb {

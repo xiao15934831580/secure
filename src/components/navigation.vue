@@ -2,13 +2,10 @@
 <div>
         <div class="header">
         <div class="headleft">
-            <!-- <span class="headerimg"></span> -->
             <span class="name">{{message}}</span>
         </div>
         <div class="headright">
-            <!-- <el-icon class="icon"><Bell /></el-icon> -->
             <span class="headpig"></span>
-            
             <el-dropdown>
                 <span class="el-dropdown-link">
                     {{nickname}}
@@ -118,7 +115,6 @@
         </el-dialog>
     </div>
 </div>
-
 </template>
 <script setup>
 import { useRouter, useRoute } from "vue-router";
@@ -128,8 +124,6 @@ import store from '@/store'
 import { ElNotification } from "element-plus";
 import { loginOut as exit} from '@/api/index'
 import {resetPasswords as resetPasswords, findMyInformation as findMyInformation } from '@/api/user'
-// import mitt from 'mitt';
-// const emitter = mitt();
     const message = '港口流动机械维修保养综合管理数字化平台'
     const {proxy} = getCurrentInstance();
     const passwordform = ref('');
@@ -151,14 +145,6 @@ import {resetPasswords as resetPasswords, findMyInformation as findMyInformation
         confirm:''
     })
     let info = ref({
-            // "id": "",
-            // "username": "",
-            // "loginClientLbl": '',
-            // "nickname": "",
-            // "sexLbl": "",
-            // "phoneNum": "",
-            // "statusLbl": "",
-            // "roleLbl": ""
     })
     const loginOut=()=>{
         exit(userData.username).then((res)=>{
@@ -178,7 +164,6 @@ import {resetPasswords as resetPasswords, findMyInformation as findMyInformation
         })
     }
     onMounted(() => {
-
             window.addEventListener('setItemEvent', function(e) {
                     if (e.key === 'userData') {
                         console.log('##', e.newValue)
