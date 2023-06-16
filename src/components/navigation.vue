@@ -210,7 +210,7 @@ import {resetPasswords as resetPasswords, findMyInformation as findMyInformation
         dialogPasswordVisible.value = false;
     }
     const lookinfo = ()=>{
-        findMyInformation(userData.username).then((res)=>{
+        findMyInformation(userData.username).then((res)=>{  
             if(res.code === 200){
                 info.value = res.body
                 dialogInfoVisible.value = true;

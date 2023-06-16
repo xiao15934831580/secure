@@ -13,10 +13,9 @@
     import { useRoute } from 'vue-router'
     const route = useRoute()
     const breadcrumbList = ref([])
-
     const initBreadcrumbList = () => {
-    breadcrumbList.value = route.matched
-    console.log(route.matched)
+      breadcrumbList.value = route.matched
+      console.log(route.matched)
     }
     watch(
     route,

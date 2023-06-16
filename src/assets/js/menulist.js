@@ -1,119 +1,149 @@
 const menulist = [
-    // 车辆基础信息管理
+    // 绩效考核和安全审计
     {
-        menuName: 'CRM管理-客户',
-        path: 'crm',
+        menuName: '绩效考核和安全审计',
+        path: 'safety',
+        children: [
+            // {
+            //     path: 'custominfo',
+            //     menuName: '客户信息',
+            //     children: [
+            //         {
+            //             path: 'basicinfo',
+            //             menuName: '客户基础信息',
+            //         },
+            //         {
+            //             path: 'blacklist',
+            //             menuName: '黑名单客户信息',
+            //         },
+            //         {
+            //             path: 'maintain',
+            //             menuName: '客户维护与关怀',
+            //         },
+            //         {
+            //             path: 'powerstationinfo',
+            //             menuName: '客户电站信息',
+            //         }
+            //     ]
+            // },
+            {
+                path: 'audit',
+                menuName: '安全审计',
+            },
+            {
+                path: 'performance',
+                menuName: '安全绩效考核',
+            },
+        ]
+    },
+    // 培训管理
+    {
+        path: 'trainingmanagement',
+        menuName: '培训管理',
         children: [
             {
-                path: 'custominfo',
-                menuName: '客户信息',
+                path: 'plan',
+                menuName: '培训规划及方式',
+            },
+            {
+                path: 'course',
+                menuName: '培训课程及内容',
+            },
+            {
+                path: 'examine',
+                menuName: '培训考核',
+            },
+            {
+                path: 'score',
+                menuName: '分数查看',
+            },
+        ]
+    },
+    // 应急管理
+    {
+        path: 'emergency',
+        menuName: '应急管理',
+        children: [
+            {
+                path: 'resource',
+                menuName: '应急资源',
+            },
+            {
+                path: 'genericplan',
+                menuName: '应急预案',
+            },
+            {
+                path: 'handle',
+                menuName: '应急处理',
                 children: [
                     {
-                        path: 'basicinfo',
-                        menuName: '客户基础信息',
+                        path: 'alarm',
+                        menuName: '事故告警',
                     },
                     {
-                        path: 'blacklist',
-                        menuName: '黑名单客户信息',
+                        path: 'message',
+                        menuName: '事故信息报送',
                     },
                     {
-                        path: 'maintain',
-                        menuName: '客户维护与关怀',
+                        path: 'track',
+                        menuName: '事故跟踪',
                     },
                     {
-                        path: 'powerstationinfo',
-                        menuName: '客户电站信息',
-                    }
-                ]
-            },
-            {
-                path: 'powerinsurance',
-                menuName: '电站保险与理赔',
-                icon: 'Cellphone',
-                children: [
-                    {
-                        path: 'insurancelist',
-                        menuName: '电站保单列表',
-                    },
-                    {
-                        path: 'policyremind',
-                        menuName: '保单提醒',
-                    },
-                    {
-                        path: 'claimsprocess',
-                        menuName: '电站理赔流程',
+                        path: 'analysis',
+                        menuName: '事故原因分析及整改',
                     },
                 ]
             },
             {
-                path: 'businessexpansion',
-                menuName: '电商拓展',
+                path: 'drill',
+                menuName: '应急演练',
             },
             {
-                path: 'barbasic',
-                menuName: '电站运维服务承揽',
+                path: 'recoveryplan',
+                menuName: '恢复方案',
+            },
+
+        ]
+    },
+    // 风险分级管控和隐患排查治理
+    {
+        path: 'danger',
+        menuName: '风险分级管控和隐患排查治理',
+        children: [
+            {
+                path: 'angerlist',
+                menuName: '已识别的风险清单'
+            },
+            {
+                path: 'potentialrisk',
+                menuName: '安全隐患'
             },
         ]
     },
+    //作业许可和作业过程管理
     {
-        path: 'wokeorder',
-        menuName: '客服工单',
+        path: 'task',
+        menuName: '作业许可和作业过程管理',
         children: [
             {
-                path: 'unaudited',
-                menuName: '未审核工单',
+                path: 'incomplete',
+                menuName: '未完成作业票'
             },
             {
-                path: 'approved',
-                menuName: '已审核工单',
+                path: 'archived',
+                menuName: '已归档作业票'
             },
             {
-                path: 'completed',
-                menuName: '已完成工单',
-            },
-        ]
-    },
-    {
-        path: 'agent',
-        menuName: 'CRM管理-代理商',
-        children: [
-            {
-                path: 'agentinfo',
-                menuName: '代理商信息',
-            },
-        ]
-    },
-    {
-        path: 'customerassets',
-        menuName: '客户资产',
-        children: [
-            {
-                path: 'photovoltaicloan',
-                menuName: '光伏贷客户',
-                children:[
-                    {
-                        path: 'account',
-                        menuName: '客户账户管理',
-                    },
-                    {
-                        path: 'income',
-                        menuName: '电站收益',
-                    }
-                ]
+                path: 'details',
+                menuName: '作业票详情'
             },
             {
-                path: 'rent',
-                menuName: '租赁客户',
-                children:[
-                    {
-                        path: 'managelist',
-                        menuName: '返还金管理列表',
-                    },
-                    {
-                        path: 'statistics',
-                        menuName: '返还金发放统计',
-                    }
-                ]
+                path: 'report',
+                menuName: '作业票统计报表'
+            },
+            {
+                path: 'credential',
+                menuName: '作业人员资质验证查询'
             },
         ]
     },
@@ -154,7 +184,7 @@ const menulist = [
                     menuName: '系统日志',
                 },
             ]
-        },
+    },
 
 ]
 export default menulist;

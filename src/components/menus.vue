@@ -82,8 +82,8 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const store = useStore()
-    const list = JSON.parse(localStorage.getItem('userData')) 
-    const menulist = list.menuTrees;
+    // const list = JSON.parse(localStorage.getItem('userData')) 
+    // const menulist = list.menuTrees;
     console.log(menulist)
     const allRoutes = router.options.routes;
     const activePath = computed(() => {
