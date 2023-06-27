@@ -1,6 +1,6 @@
 import axios from 'axios'
 const http = axios.create({
-  baseURL: '/elephone', //process.env.VUE_APP_BASE_API
+  baseURL: '/api', //process.env.VUE_APP_BASE_API
   // timeout: 1800000,
 })
 // http.defaults.headers.post["loginClient"] = "pc";

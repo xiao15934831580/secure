@@ -1,4 +1,4 @@
-import { login as loginApi } from '@/api/index'
+import { login as loginApi } from '@/api/user'
 import router from '@/router'
 import { setTokenTime } from '@/utils/auth'
 import { ElNotification } from "element-plus";

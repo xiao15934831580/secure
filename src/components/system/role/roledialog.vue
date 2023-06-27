@@ -128,7 +128,6 @@ const rules = reactive({
   status: [{ required: true, message: "请选择角色状态", trigger: "change" }],
   menuNumLbl: [{ required: true, message: "请选择角色菜单", trigger: "change" }],
   roleCode: [{ required: true, message: "请输入角色编码", trigger: "blur" }],
-  
 });
 
 let titile = ref("");
@@ -156,7 +155,6 @@ watch(
     if (titile.value === "编辑" ){
         formInline = props.dialogTableValue.value;
     }
-
   },
   { deep: true, immediate: true }
 );

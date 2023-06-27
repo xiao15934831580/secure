@@ -1,7 +1,7 @@
 <template>
 <div>
         <div class="header">
-        <div class="headleft">
+        <div class="headleft"> 
             <span class="name">{{message}}</span>
         </div>
         <div class="headright">
@@ -122,7 +122,7 @@ import { useStore } from 'vuex';
 import { reactive, ref, getCurrentInstance ,onMounted} from "vue";
 import store from '@/store'
 import { ElNotification } from "element-plus";
-import { loginOut as exit} from '@/api/index'
+import { loginOut as exit} from '@/api/user'
 import {resetPasswords as resetPasswords, findMyInformation as findMyInformation } from '@/api/user'
     const message = '港口流动机械维修保养综合管理数字化平台'
     const {proxy} = getCurrentInstance();
@@ -219,15 +219,12 @@ import {resetPasswords as resetPasswords, findMyInformation as findMyInformation
                     title: 'Warning',
                     message: res.message?res.message:'服务器异常',
                     type: 'warning',
-                    })
+                })
                         if(res.code === 100007 ||  res.code === 100008){
                                 store.dispatch('app/logout')
                             }
             }
-            
-            
         })
-        
     }
     const closeInfo = ()=>{
         dialogInfoVisible.value = false;

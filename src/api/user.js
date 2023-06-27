@@ -1,10 +1,23 @@
 import http from './request'
+export const login = (data) => {
+    return http({
+        url: '/hongyun-user/admin/login',
+        method: 'POST',
+        data
+    })
+}
+export const loginOut = (userName) => {
+    return http({
+        url: '/hongyun-user/admin/exitUser?userName='+userName,
+        method: 'GET',
+    })
+}
 /**
  * 重置密码
  */
  export const resetPasswords = (data) => {
     return http({
-        url: '/admin/resetPasswords',
+        url: '/hongyun-user/admin/resetPasswords',
         method: 'POST',
         data
     })
@@ -14,7 +27,7 @@ import http from './request'
  */
  export const getAdminUser = (data) => {
     return http({
-        url: '/admin/getAdminUser',
+        url: '/hongyun-user/admin/getAdminUser',
         method: 'POST',
         data
     })
@@ -24,7 +37,7 @@ import http from './request'
  */
  export const deleteUser = (id) => {
     return http({
-        url: `/admin/deleteUser/${id}`,
+        url: `/hongyun-user/admin/deleteUser/${id}`,
         method: 'DELETE',
     })
 }
@@ -33,7 +46,7 @@ import http from './request'
  */
  export const operateAdminUser = (data) => {
     return http({
-        url: '/admin/operateAdminUser',
+        url: '/hongyun-user/admin/operateAdminUser',
         method: 'POST',
         data
     })
@@ -43,7 +56,7 @@ import http from './request'
  */
  export const findMyInformation = (userName) => {
     return http({
-        url: '/admin/findMyInformation?userName='+userName,
+        url: '/hongyun-user/admin/findMyInformation?userName='+userName,
         method: 'GET',
     })
 }

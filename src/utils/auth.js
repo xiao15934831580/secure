@@ -16,6 +16,7 @@ export const diffTokenTime = () => {
   const tokenTime = getTokenTime()
   return currentTime - tokenTime > TOKEN_TIME_VALUE
 }
+//修改时间戳为年月日，时分秒
 export const getymd = (dateStr) => {
   let d = new Date(dateStr),
   month = '' + (d.getMonth() + 1),
@@ -27,6 +28,7 @@ export const getymd = (dateStr) => {
 
  return [year, month, day].join('-');
 }
+//修改时间戳为时分秒
 export const getymdhms = (dateStr)=>{
   let d = new Date(dateStr),
   month = '' + (d.getMonth() + 1),
