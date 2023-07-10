@@ -1,5 +1,5 @@
 <template>
-  <div class="lz-dialog">
+  <div class="course-dialog">
     <el-dialog
       ref="ruleFormRef"
       :model-value="dialogData.props.dialogFormVisible"
@@ -10,7 +10,7 @@
       draggable
     >
       <div>
-        <div style="margin-top:24px;">
+        <div>
           <el-form
             :model="dialogData.formData"
             :inline="true"
@@ -84,7 +84,7 @@
                     v-model="dialogData.formData.passCriteria"
                     />
                 </el-form-item>
-                <el-form-item label="考试时间" prop="checkEndTime" required>
+                <!-- <el-form-item label="考试时间" prop="checkEndTime" required>
                         <el-date-picker
                         :disabled="dialogData.props.title === '查看'"
                           v-model="dialogData.formData.checkEndTime"
@@ -92,7 +92,7 @@
                           placeholder="请选择考试时间"
                           :default-time="defaultTime"
                         />
-                </el-form-item>
+                </el-form-item> -->
                  <el-form-item label="上传资料" prop="fileList" required>
                     <el-upload
                         :disabled="dialogData.props.title === '查看'"
@@ -155,7 +155,7 @@ if( JSON.parse(JSON.stringify(dialogData.formData.fileList)).length === 0) {
         }
 }
 const dialogData = reactive({
-    formLabelWidth:"40%",
+    formLabelWidth:"30%",
     defaultTime : new Date(2000, 1, 1, 12, 0, 0),
     rules:{
         planId:[{ required: true, message: "请选择培训主题", trigger: "change" }],
@@ -163,7 +163,7 @@ const dialogData = reactive({
         courseType:[{ required: true, message: "请选择课件类型", trigger: "change" }],
         lecturer:[{ required: true, message: "请输入培训讲师", trigger: "blur" }],
         passCriteria:[{ required: true, message: "请输入通过标准", trigger: "blur" }],
-        checkEndTime:[{ required: true, message: "请输入培训及考核截止时间", trigger: "blur" }],
+        // checkEndTime:[{ required: true, message: "请输入培训及考核截止时间", trigger: "blur" }],
         cultivateType:[{ required: true, message: "请选择培训类型", trigger: "change" }],
         fileList:[{ validator:checkFileList, trigger: "change" }],
     },
@@ -195,7 +195,7 @@ const dialogData = reactive({
         lecturer:'',
         passCriteria:'',
         learnTime:'',
-        checkEndTime:'',
+        // checkEndTime:'',
         learnStateStr:'',
         courseUrl:'',
         cultivateBody:'',
@@ -276,7 +276,7 @@ const success = (addform) => {
   addform.validate(async (valid) => {
     if (valid) {
       let obj = JSON.parse(JSON.stringify(dialogData.formData));
-      obj.checkEndTime = obj.checkEndTime?getymdhms(obj.checkEndTime):''
+      // obj.checkEndTime = obj.checkEndTime?getymdhms(obj.checkEndTime):''
       operateCourse(obj).then((res)=>{
         if(res.code ===200){
             close()
@@ -335,12 +335,8 @@ const uploadSuccess = (response, file, fileList)=>{
 
 
 <style lang = 'less' scoped>
-.lz-dialog {
-  .dia-suc {
-    margin-left: 16px !important;
-  }
-
-  :deep(.el-input){
+.course-dialog {
+ :deep(.el-input){
     width: 300px;
   }
   .basictitle {
@@ -364,30 +360,28 @@ const uploadSuccess = (response, file, fileList)=>{
   }
   :deep(.el-dialog__footer) {
     padding-top: 16px;
+    background-color: #ffffff;
   }
   :deep(.el-dialog__body) {
     padding: 0;
     max-height: 550px;
     overflow-y: auto;
     overflow-x: hidden;
+    background-color: #ffffff;
+    padding: 16px;
   }
   :deep(.el-dialog__header) {
     border-bottom: 1px solid #cccccc;
-    padding: 0;
+    padding: 16px;
     margin-right: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   :deep(.el-dialog__title) {
-    color: #409eff;
+    color: #1C222C;
     font-size: 20px;
-    height: 40px;
     width: 100px;
-    border-bottom: 4px solid #409eff;
-  }
-  :deep(.el-dialog) {
-    padding: 24px;
   }
   :deep(.el-dialog__headerbtn ){
     position: static;
@@ -404,73 +398,5 @@ const uploadSuccess = (response, file, fileList)=>{
 :deep(.el-form) {
   position: relative;
 }
-.imgstyle {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-.avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
-:deep(.avatar-uploader .el-upload ){
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
-}
-:deep(.el-form-item__content) {
-  width: 300px;
-}
-.address {
-  :deep(.el-form-item__content ){
-    width: 350px;
-  }
-}
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
-}
 
-.el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 140px;
-  height: 150px;
-  text-align: center;
-}
-.uploadimg {
-  text-align: center;
-  background-color: rgba(64, 158, 255, 0.1);
-  span {
-    color: #409eff;
-  }
-}
-
-/* .basicstyle {
-  width: 83%;
-} */
-.imgstyle {
-  width: 15%;
-  :deep(.el-form-item) {
-    margin: 0;
-  }
-  :deep(.el-form-item__content) {
-    width: 100%;
-  }
-  :deep(.el-icon) {
-    width: 120px;
-  }
-}
-.idinfo {
-  position: relative;
-  .removeidinfo {
-    margin-left: 24px;
-    font-size: 20px;
-    position: absolute;
-    margin-top: 5px;
-  }
-}
 </style>

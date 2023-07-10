@@ -48,10 +48,25 @@ const menulist = [
             {
                 path: 'course',
                 menuName: '培训课程及内容',
-            },
+            }, 
+        ]
+    },
+    //考试管理
+    {
+        path: 'examinemanagement',
+        menuName: '考试管理',
+        children: [
             {
                 path: 'examine',
                 menuName: '培训考核',
+            },
+            {
+                path: 'examquestion',
+                menuName: '考试题库',
+            },
+            {
+                path: 'examrecord',
+                menuName: '考试记录',
             },
             {
                 path: 'score',

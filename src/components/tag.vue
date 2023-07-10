@@ -9,7 +9,7 @@
       >
         <el-icon :size="20"><ArrowLeft /></el-icon>
       </div> -->
-      <el-scrollbar style="height: 60px; white-space: nowrap" ref="elscrollbar">
+      <el-scrollbar style="white-space: nowrap" ref="elscrollbar">
       <!-- 标签内容 -->
       <div class="tags_content" ref="box">
         <span class="tags_style" ref="tags">
@@ -17,9 +17,10 @@
           <el-tag
             v-for="(tag, index) in tags"
             :key="tag.name"
-            :class="[active == index ? 'active top_tags' : 'top_tags']"
-            
+            :class="[active == index ? 'active' : 'top_tags']"
             :closable="tag.name != '首页'"
+            :effect="dark"
+            :type="active == index ?'':'info'"
             @close="handleClose(index, tag)"
             @click="clickTag(index, tag)"
             @contextmenu.prevent="handleClickContextMenu(index, tag)"
@@ -241,14 +242,25 @@ export default {
   &_content {
     transition: 0.3s;
     white-space: nowrap;
-    line-height: 48px;
-    margin: 0 8px;
-    ::v-deep .el-tag {
+    // line-height: 48px;
+    margin: 0 -8px 16px;
+    
+    ::v-deep .top_tags {
       cursor: pointer;
       margin: 0 8px;
+      background-color:#fff;
+      color: #797F89;
+    }
+    ::v-deep .active {
+      cursor: pointer;
+      margin: 0 8px;
+      background-color:#2E83FC;
+      color: #ffffff;
     }
   }
-
+// :deep(.el-tag .el-tag__close){
+//   color: #797F89;
+// }
   .top_tags {
     margin-right: 8px;
     cursor: pointer;
@@ -260,20 +272,21 @@ export default {
   .top_tags:hover,
   .active,
   .el-tag__content:hover {
-    background: #e7eaf0;
+    background: #2E83FC;
   }
-  // .active{
-  //    background: #999;
-  // }
+  .active{
+     background: #2E83FC;
+  }
 }
 .TagVue {
-  height: 48px;
+  // height: 48px;
   width: 100%;
-  background-color: #ffff;
-  margin-top: 16px;
+  // background-color: #ffff;
+  // margin-top: 16px;
   position: relative;
   .active {
-     background: #e7eaf0;
+    //  background: #2E83FC;
+    //  color: #ffffff;
   }
   .arrow .arrow_left {
     width: 36px;
@@ -284,4 +297,6 @@ export default {
     text-align: center;
   }
 }
+
+
 </style>

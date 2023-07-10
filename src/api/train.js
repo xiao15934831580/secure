@@ -63,3 +63,68 @@ export const uploadCourse = (data) => {
         data
     })
 }
+/**************************考试******************************** */
+//获取所有的课程
+export const getCourses = (data) => {
+    return http({
+        url: '/hongyun-training/course/getCourses',
+        method: 'POST',
+        data
+    })
+}
+//获取所有的考试列表
+export const findExamineList = (data,username) => {
+    return http({
+        url: '/hongyun-training/examine/findExamineList',
+        headers: {'username' : username},
+        method: 'POST',
+        data
+    })
+}
+//新增/修改考核
+export const operateExamine = (data) => {
+    return http({
+        url: '/hongyun-training/examine/operateExamine',
+        method: 'POST',
+        data
+    })
+}
+//获取课程总题数
+export const getQuestionNum = (courseId) => {
+    return http({
+        url: '/hongyun-user/examine/getQuestionNum?courseId='+courseId,
+        method: 'GET',
+    })
+}
+//开始考试
+export const findExamineGrade = (data,username) => {
+    return http({
+        url: '/hongyun-training/examine/findExamineGrade',
+        method: 'POST',
+        headers: {'username' : username},
+        data
+    })
+}
+/**************************考试题库******************************** */
+export const getQuestionList = (data) => {
+    return http({
+        url: '/hongyun-training/examine/getQuestionList',
+        method: 'POST',
+        data
+    })
+}
+//编辑考试题目
+export const operateQuestion = (data) => {
+    return http({
+        url: '/hongyun-training/examine/operateQuestion',
+        method: 'POST',
+        data
+    })
+}
+//随机选取考题
+export const extractQuestions = (examineId) => {
+    return http({
+        url: '/hongyun-training/examine/extractQuestions?examineId='+examineId,
+        method: 'GET',
+    })
+}

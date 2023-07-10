@@ -1,5 +1,5 @@
 <template>
-  <div class="lz-dialog">
+  <div class="plan-dialog">
     <el-dialog
       ref="ruleFormRef"
       :model-value="dialogData.props.dialogFormVisible"
@@ -12,7 +12,7 @@
       <div>
         <!-- 基础信息 -->
         <!-- <p class="basicinfo"><span>车辆信息</span></p> -->
-        <div style="margin-top:24px;">
+        <div >
           <el-form
             :model="dialogData.formData"
             :inline="true"
@@ -69,7 +69,7 @@ import { operatePlan as operatePlan } from '@/api/train.js'
 const emits = defineEmits(["update:modelValue"]);
 const addform = ref('');
 const dialogData = reactive({
-    formLabelWidth:"40%",
+    formLabelWidth:"30%",
     rules:{
         headline:[{ required: true, message: "请输入培训主题", trigger: "blur" }]
     },
@@ -152,11 +152,7 @@ const success = (addform) => {
 
 
 <style lang = 'less' scoped>
-.lz-dialog {
-  .dia-suc {
-    margin-left: 16px !important;
-  }
-
+.plan-dialog {
   :deep(.el-input){
     width: 300px;
   }
@@ -181,30 +177,28 @@ const success = (addform) => {
   }
   :deep(.el-dialog__footer) {
     padding-top: 16px;
+    background-color: #ffffff;
   }
   :deep(.el-dialog__body) {
     padding: 0;
     max-height: 550px;
     overflow-y: auto;
     overflow-x: hidden;
+    background-color: #ffffff;
+    padding: 16px;
   }
   :deep(.el-dialog__header) {
     border-bottom: 1px solid #cccccc;
-    padding: 0;
+    padding: 16px;
     margin-right: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   :deep(.el-dialog__title) {
-    color: #409eff;
+    color: #1C222C;
     font-size: 20px;
-    height: 40px;
     width: 100px;
-    border-bottom: 4px solid #409eff;
-  }
-  :deep(.el-dialog) {
-    padding: 24px;
   }
   :deep(.el-dialog__headerbtn ){
     position: static;
@@ -221,73 +215,10 @@ const success = (addform) => {
 :deep(.el-form) {
   position: relative;
 }
-.imgstyle {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-.avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
-:deep(.avatar-uploader .el-upload ){
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
-}
+
 :deep(.el-form-item__content) {
   width: 300px;
 }
-.address {
-  :deep(.el-form-item__content ){
-    width: 350px;
-  }
-}
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
-}
 
-.el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 140px;
-  height: 150px;
-  text-align: center;
-}
-.uploadimg {
-  text-align: center;
-  background-color: rgba(64, 158, 255, 0.1);
-  span {
-    color: #409eff;
-  }
-}
 
-/* .basicstyle {
-  width: 83%;
-} */
-.imgstyle {
-  width: 15%;
-  :deep(.el-form-item) {
-    margin: 0;
-  }
-  :deep(.el-form-item__content) {
-    width: 100%;
-  }
-  :deep(.el-icon) {
-    width: 120px;
-  }
-}
-.idinfo {
-  position: relative;
-  .removeidinfo {
-    margin-left: 24px;
-    font-size: 20px;
-    position: absolute;
-    margin-top: 5px;
-  }
-}
 </style>

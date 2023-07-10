@@ -12,13 +12,16 @@ import '@/router/permission'
 import axios from 'axios';
 import md5 from 'js-md5';
 import * as Base64 from 'js-base64'
-
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { dispatchEventStorage } from '@/utils/auth.js'
 
 const app = createApp(App)
 Object.keys(Icons).forEach((key) => {
     app.component(key, Icons[key]);
 }); 
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
 app.config.globalProperties.$echarts = echarts;
 app.config.globalProperties.$axios = axios;
 app.config.globalProperties.$md5 = md5;

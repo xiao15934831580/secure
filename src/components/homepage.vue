@@ -1,13 +1,15 @@
 <template>
      <div class="common-layout homepage">
         <el-container>
-        <el-header><NaviGation></NaviGation></el-header>
+        <el-aside width="268px"><AllMenus></AllMenus></el-aside>
         <el-container>
-            <el-aside width="256px"><AllMenus></AllMenus></el-aside>
-            <el-main>
-                <TagVue></TagVue>
-                <router-view />
-            </el-main>
+        <el-header><NaviGation></NaviGation></el-header>
+        <el-main>
+            <TagVue></TagVue>
+            <router-view />
+        </el-main>
+        
+
         </el-container>
         </el-container>
     </div>
@@ -35,21 +37,23 @@ export default {
 }
 .el-header{
         --el-header-padding: 0;
+        border-bottom: 1px solid #DFE2E7;
 }
 .el-aside{
-    background-color: #545c64;
+    background-color: #EDF0F5;
+    border-right: 1px solid #DFE2E7;
 }
 .el-main{
     --el-main-padding:0;
-    width: 100%;
     overflow: hidden;
-    height: calc(100% - 24px);
-    margin-bottom: 24px;
+    height: calc(100% - 16px);
+    margin: 16px 16px 0;
 }
 .el-container.is-vertical{
     height: 100%;
+    background-color: #EDF0F5;
 }
  :deep(.el-container){
-    height: calc(100Vh - 60px);
+    height: 100Vh;
 }
 </style>

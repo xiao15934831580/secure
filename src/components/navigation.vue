@@ -2,7 +2,8 @@
 <div>
         <div class="header">
         <div class="headleft"> 
-            <span class="name">{{message}}</span>
+            <!-- <span class="name">{{message}}</span> -->
+            <breadcrumb/>
         </div>
         <div class="headright">
             <span class="headpig"></span>
@@ -117,6 +118,7 @@
 </div>
 </template>
 <script setup>
+import breadcrumb from "./breadcrumb.vue"
 import { useRouter, useRoute } from "vue-router";
 import { useStore } from 'vuex';
 import { reactive, ref, getCurrentInstance ,onMounted} from "vue";
@@ -124,7 +126,8 @@ import store from '@/store'
 import { ElNotification } from "element-plus";
 import { loginOut as exit} from '@/api/user'
 import {resetPasswords as resetPasswords, findMyInformation as findMyInformation } from '@/api/user'
-    const message = '港口流动机械维修保养综合管理数字化平台'
+
+    const message = '培训管理/培训规划及方式'
     const {proxy} = getCurrentInstance();
     const passwordform = ref('');
     let dialogPasswordVisible  = ref(false);
@@ -297,8 +300,7 @@ import {resetPasswords as resetPasswords, findMyInformation as findMyInformation
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
-    height: 60px;
-    background-color: #ffff;
+    height: 59px;
 }
 .headerimg{
     width: 30px;

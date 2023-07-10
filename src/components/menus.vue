@@ -2,12 +2,14 @@
   <div class="bottombox">
     <el-row class="tac">
       <el-col>
+        <div class="logoStyle">
+          <!-- <p>智能安全风险管控平台</p> -->
+        </div>
         <el-menu
           router
-          active-text-color="#ffd04b"
-          background-color="#545c64"
+          active-text-color = '#2E83FC'
+          text-color="#1C222C"
           class="el-menu-vertical-demo"
-          text-color="#fff"
           @open="handleOpen"
           @close="handleClose"
           :default-active="defaultMenu"
@@ -115,13 +117,32 @@ export default {
 };
 </script>
 <style scoped>
+.logoStyle{
+  height: 138px;
+  text-align: center;
+  color: #1C222C;
+  font-size: 24px;
+  background-image: url('@/assets/image/logo01.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 .homepage .el-row .el-col .el-menu--vertical {
-  height: calc(100vh - 60px);
+  height: 100%;
 }
 .bottombox {
   position: relative;
 }
 .el-menu {
   border-right: none;
+}
+:deep(.el-menu){
+  background-color: #EDF0F5 !important;
+}
+.el-menu-item.is-active {
+  background-color: rgba(46, 131, 252, 0.12) !important;
+  border-right: 2px solid #2E83FC;
+}
+.el-menu-vertical-demo{
+  color: #2E83FC;
 }
 </style>

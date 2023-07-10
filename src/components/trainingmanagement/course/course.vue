@@ -1,101 +1,96 @@
 <template>
 <div class="totalStyle">
     <div class="tablestyle">
-    <div class="searchsize">
-      <el-col :span="20" class="searchBox">
-        <el-input
-          class="w-10 m-2 mr-16 float-left"
-          v-model="modeldata.searchValue.headline"
-          placeholder="请输入培训主题"
-        />
-        <el-input
-          class="w-10 m-2 mr-16 float-left"
-          v-model="modeldata.searchValue.courseName"
-          placeholder="请输入课程名称"
-        />
-        <!-- <el-select class="w-10 m-2 mr-16" v-model="modeldata.searchValue.learnState" clearable  placeholder="请选择学习状态">
-          <el-option
-            v-for="item in modeldata.dropdown.learnState"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select> -->
-        <el-select class="w-10 m-2 mr-16" v-model="modeldata.searchValue.cultivateType" clearable  placeholder="请选择培训类型">
-          <el-option
-            v-for="item in modeldata.dropdown.cultivateType"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-col>
-      <el-col :span="4">
-        <el-button  class="searchbutton " @click="queryTableData"
-        >查询</el-button>
-        <el-button  class="searchbutton mr-16"  @click="handleBuild">新建</el-button>
-      </el-col>
-    </div>
-    <div class="chartstyle">
-      <el-table
-        :data="modeldata.table.tableData"
-        :header-cell-style="{ background: '#d9ecff' }"     
-        border
-        style="width: 100%"
-      > 
-        <el-table-column label="序号" min-width="7%">
-              <template #default="requestscope">
-                    <span >{{
-                      requestscope.$index+1 + (modeldata.table.pageSize*(modeldata.table.pageIndex-1))
-                    }}</span>
-              </template>
-        </el-table-column>
-        <el-table-column prop="cultivateTypeStr" label="主题类型" min-width="10%" />
-        <el-table-column prop="headline" label="培训主题" min-width="10%" />
-        <el-table-column prop="courseName" label="课程名称" min-width="10%" >
-           <template #default="scope">
-                <span class="elispice underline" @click="lookCourseName(scope.row)">{{
-                  scope.row.courseName}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="courseTypeStr" label="课件类型" min-width="10%" />
-        <el-table-column prop="lecturer" label="发布人" min-width="10%" />
-        <el-table-column prop="passCriteria" label="及格线" min-width="10%" />
-        <!-- <el-table-column prop="learnTime" label="累计学习时间" min-width="10%" /> -->
-        <el-table-column prop="checkEndTime" label="考试时间" min-width="10%" />
-        <el-table-column prop="learnStateStr" label="培训对象" min-width="10%" />
-        <el-table-column label="操作列" width="250" min-width="28%">
-          <template #default="scope">
-            <el-button size="small" @click="handleLook(scope.$index, scope.row)"
-              >查看</el-button>
-            <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-              >编辑</el-button>
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button>
-          </template>
-        </el-table-column>
-        <template #empty>
-            <el-empty v-loading="modeldata.table.tableLoading"></el-empty>
-        </template>
-      </el-table>
-      <div class="demo-pagination-block">
-        <el-pagination
-          :pageIndex="modeldata.table.pageIndex"
-          :page-size="modeldata.table.pageSize"
-          :page-sizes="[5, 10, 15, 20]"
-          :small="small"
-          :disabled="disabled"
-          :background="background"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="modeldata.table.total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+      <div class="titleStyle">
+        <p class="leftTitle">培训课程及内容</p>
+        <el-button type="primary"   @click="handleBuild">新建</el-button>
       </div>
-    </div>
+      <div class="bottomBox">
+        <div class="searchsize">
+          <el-col  class="searchBox">
+            <el-input
+              class="w-10 m-2 mr-16 float-left"
+              v-model="modeldata.searchValue.headline"
+              placeholder="请输入培训主题"
+            />
+            <el-input
+              class="w-10 m-2 mr-16 float-left"
+              v-model="modeldata.searchValue.courseName"
+              placeholder="请输入课程名称"
+            />
+            <el-select class="w-10 m-2 mr-16" v-model="modeldata.searchValue.cultivateType" clearable  placeholder="请选择培训类型">
+              <el-option
+                v-for="item in modeldata.dropdown.cultivateType"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+            <el-button type="primary" plain  @click="queryTableData"
+            >查询</el-button>
+          </el-col>
+        </div>
+        <div class="chartstyle">
+          <el-table
+            :data="modeldata.table.tableData"
+            :header-cell-style="{ background: '#F2F5FA' }"     
+            border
+            style="width: 100%"
+          > 
+            <el-table-column label="序号" min-width="7%">
+                  <template #default="requestscope">
+                        <span >{{
+                          requestscope.$index+1 + (modeldata.table.pageSize*(modeldata.table.pageIndex-1))
+                        }}</span>
+                  </template>
+            </el-table-column>
+            <el-table-column prop="cultivateTypeStr" label="主题类型" min-width="10%" />
+            <el-table-column prop="headline" label="培训主题" min-width="10%" />
+            <el-table-column prop="courseName" label="课程名称" min-width="10%" >
+              <template #default="scope">
+                    <span class="elispice underline" @click="lookCourseName(scope.row)">{{
+                      scope.row.courseName}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="courseTypeStr" label="课件类型" min-width="10%" />
+            <el-table-column prop="lecturer" label="发布人" min-width="10%" />
+            <el-table-column prop="passCriteria" label="及格线" min-width="10%" />
+            <!-- <el-table-column prop="learnTime" label="累计学习时间" min-width="10%" /> -->
+            <!-- <el-table-column prop="checkEndTime" label="考试时间" min-width="10%" /> -->
+            <el-table-column prop="learnStateStr" label="培训对象" min-width="10%" />
+            <el-table-column label="操作列" width="250" min-width="28%">
+              <template #default="scope">
+                <el-button size="small" @click="handleLook(scope.$index, scope.row)"
+                  >查看</el-button>
+                <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+                  >编辑</el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="handleDelete(scope.$index, scope.row)"
+                  >删除</el-button>
+              </template>
+            </el-table-column>
+            <template #empty>
+                <el-empty v-loading="modeldata.table.tableLoading"></el-empty>
+            </template>
+          </el-table>
+          <div class="demo-pagination-block">
+            <el-pagination
+              :pageIndex="modeldata.table.pageIndex"
+              :page-size="modeldata.table.pageSize"
+              :page-sizes="[5, 10, 15, 20]"
+              :small="small"
+              :disabled="disabled"
+              :background="background"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="modeldata.table.total"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+            />
+          </div>
+        </div>
+      </div>
 </div>
   <!-- 编辑 -->
   <Dialog
@@ -144,7 +139,7 @@ let modeldata =  reactive({
     searchValue:{
       headline:'',
       courseName:'',
-      learnState:'',
+      // learnState:'',
       cultivateType:''
     },
     routerId:'',
@@ -156,13 +151,13 @@ let modeldata =  reactive({
                       label: '常规培训',
                       value: "1"
                     }],
-      learnState:[{
-                    label: '已学习',
-                    value: "1"
-                  },{
-                    label: '未学习',
-                    value: "0"
-                  }]
+      // learnState:[{
+      //               label: '已学习',
+      //               value: "1"
+      //             },{
+      //               label: '未学习',
+      //               value: "0"
+      //             }]
     },
     table:{
         tableLoading: false,
@@ -337,20 +332,8 @@ const onPlayerTimeupdate =(player) =>{
     max-width: none;
   }
 }
-.searchsize {
-    position: relative;
-    width: 100%;
-    // height: 114px;
-    border: 1px solid #ecf5ff;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0px 0px 6px #d9ecff;
-    display: flex;
-    justify-content: space-between;
-  .batchimport {
-    position: absolute;
-    right: 24px;
-  }
+:deep(.customer-no-border-table .el-table--border, .el-table--group){
+     border: none;
 }
 .demo-pagination-block {
   margin-top: 16px;
@@ -421,9 +404,6 @@ const onPlayerTimeupdate =(player) =>{
     margin-left: 32px;
     margin-bottom: 48px;
   }
-}
-.searchbutton{
-  float: right;
 }
 
 </style>

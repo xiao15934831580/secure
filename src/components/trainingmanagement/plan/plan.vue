@@ -1,94 +1,99 @@
 <template>
 <div class="totalStyle">
     <div class="tablestyle">
-    <div class="searchsize">
-      <el-col :span="20" class="searchBox">
-        <el-input
-          class="w-10 m-2 mr-16 float-left"
-          v-model="plandata.searchValue.headline"
-          placeholder="请输入培训主题"
-        />
-        <span>
-          <el-date-picker
-            class="w-10 m-2 mr-16 float-left"
-            v-model="plandata.searchValue.timeframe"
-            type="daterange"
-            start-placeholder="请选择开始日期"
-            end-placeholder="请选择结束日期"
-            :default-time="defaultTime"
-          />
-          <el-select class="w-10 m-2 mr-16" v-model="plandata.searchValue.cultivateType" clearable  placeholder="请选择主题类型">
-            <el-option
-              v-for="item in plandata.dropdown.cultivateType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </span>
+      <div class="titleStyle">
+        <p class="leftTitle">培训规划及方式</p>
+        <el-button type="primary"   @click="handleBuild">新建</el-button>
+      </div>
+      <div class="bottomBox">
+        <div class="searchsize">
+            <el-col  class="searchBox">
+              <el-input
+                class="w-10 m-2 mr-16 float-left"
+                v-model="plandata.searchValue.headline"
+                placeholder="请输入培训主题"
+              />
+              <span>
+                <el-date-picker
+                  class="w-10 m-2 mr-16 float-left"
+                  v-model="plandata.searchValue.timeframe"
+                  type="daterange"
+                  start-placeholder="请选择开始日期"
+                  end-placeholder="请选择结束日期"
+                  :default-time="defaultTime"
+                />
+                <el-select class="w-10 m-2 mr-16" v-model="plandata.searchValue.cultivateType" clearable  placeholder="请选择主题类型">
+                  <el-option
+                    v-for="item in plandata.dropdown.cultivateType"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </span>
+              <el-button type="primary" plain class="searchbutton " @click="queryTableData" >查询</el-button>
+            </el-col>
+        <!-- <el-col :span="4">
 
-      </el-col>
-      <el-col :span="4">
-        <el-button  class="searchbutton " @click="queryTableData"
-        >查询</el-button>
-        <el-button  class="searchbutton mr-16"  @click="handleBuild">新建</el-button>
-      </el-col>
-    </div>
-    <div class="chartstyle">
-      <el-table
-        :data="plandata.table.tableData"
-        :header-cell-style="{ background: '#d9ecff' }"     
-        border
-        style="width: 100%"
-      > 
-        <el-table-column label="序号" min-width="7%">
-              <template #default="requestscope">
-                    <span >{{
-                      requestscope.$index+1 + (plandata.table.pageSize*(plandata.table.pageIndex-1))
-                    }}</span>
+          
+        </el-col> -->
+        </div>
+        <div class="chartstyle">
+          <el-table
+            :data="plandata.table.tableData"
+            :header-cell-style="{ background: '#F2F5FA' }"     
+            border
+            style="width: 100%"
+          > 
+            <el-table-column label="序号" min-width="7%">
+                  <template #default="requestscope">
+                        <span >{{
+                          requestscope.$index+1 + (plandata.table.pageSize*(plandata.table.pageIndex-1))
+                        }}</span>
+                  </template>
+            </el-table-column>
+            <el-table-column prop="headline" label="培训主题" min-width="10%" >
+              <template #default="scope">
+                    <span class="elispice underline" @click="handleLook(scope.row)">{{
+                      scope.row.headline}}</span>
               </template>
-        </el-table-column>
-        <el-table-column prop="headline" label="培训主题" min-width="10%" >
-          <template #default="scope">
-                <span class="elispice underline" @click="handleLook(scope.row)">{{
-                  scope.row.headline}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="cultivateTypeStr" label="主题类型" min-width="10%" />
-        <el-table-column prop="creatTime" label="发布时间" min-width="10%" />
-        <el-table-column label="操作列" width="250" min-width="28%">
-          <template #default="scope">
-            <el-button size="small" @click="handleLook(scope.row)"
-              >查看</el-button>
-            <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-              >编辑</el-button>
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button>
-          </template>
-        </el-table-column>
-        <template #empty>
-            <el-empty v-loading="plandata.table.tableLoading"></el-empty>
-        </template>
-      </el-table>
-      <div class="demo-pagination-block">
-        <el-pagination
-          :pageIndex="plandata.table.pageIndex"
-          :page-size="plandata.table.pageSize"
-          :page-sizes="[5, 10, 15, 20]"
-          :small="small"
-          :disabled="disabled"
-          :background="background"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="plandata.table.total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+            </el-table-column>
+            <el-table-column prop="cultivateTypeStr" label="主题类型" min-width="10%" />
+            <el-table-column prop="creatTime" label="发布时间" min-width="10%" />
+            <el-table-column label="操作列" width="250" min-width="28%">
+              <template #default="scope">
+                <el-button size="small" @click="handleLook(scope.row)"
+                  >查看</el-button>
+                <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+                  >编辑</el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="handleDelete(scope.$index, scope.row)"
+                  >删除</el-button>
+              </template>
+            </el-table-column>
+            <template #empty>
+                <el-empty v-loading="plandata.table.tableLoading"></el-empty>
+            </template>
+          </el-table>
+          <div class="demo-pagination-block">
+            <el-pagination
+              :pageIndex="plandata.table.pageIndex"
+              :page-size="plandata.table.pageSize"
+              :page-sizes="[5, 10, 15, 20]"
+              :small="small"
+              :disabled="disabled"
+              :background="background"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="plandata.table.total"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+            />
+          </div>
+        </div>
       </div>
     </div>
-</div>
   <!-- 编辑 -->
   <Dialog
     v-model="plandata.dialog.dialogFormVisible"
@@ -146,7 +151,7 @@ const queryTableData = () => {
     cultivateType:plandata.searchValue.cultivateType,
     beginTime:plandata.searchValue.timeframe?getymd(plandata.searchValue.timeframe[0]):'',
     endTime:plandata.searchValue.timeframe?getymd(plandata.searchValue.timeframe[1]):'',
-    pageIndex:plandata.table.plandata,
+    pageIndex:plandata.table.pageIndex,
     pageSize:plandata.table.pageSize
   }
   getPlanList(obj)
@@ -258,20 +263,8 @@ const handleLook = (row)=>{
     max-width: none;
   }
 }
-.searchsize {
-    position: relative;
-    width: 100%;
-    // height: 114px;
-    border: 1px solid #ecf5ff;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0px 0px 6px #d9ecff;
-    display: flex;
-    justify-content: space-between;
-  .batchimport {
-    position: absolute;
-    right: 24px;
-  }
+:deep(.customer-no-border-table .el-table--border, .el-table--group){
+     border: none;
 }
 .demo-pagination-block {
   margin-top: 16px;
@@ -343,8 +336,6 @@ const handleLook = (row)=>{
     margin-bottom: 48px;
   }
 }
-.searchbutton{
-  float: right;
-}
+
 
 </style>
