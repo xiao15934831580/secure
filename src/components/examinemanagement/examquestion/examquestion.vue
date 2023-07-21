@@ -7,6 +7,7 @@
       </div>
       <div class="bottomBox">
         <div class="searchsize">
+          <el-button class="deleteAll" @click="deleteAll">批量删除</el-button>
           <el-col  class="searchBox">
             <el-input
               class="w-10 m-2 mr-16 float-left"
@@ -63,7 +64,12 @@
             <el-table-column prop="questionTypeStr" label="题型" min-width="10%" />
             <el-table-column prop="question" label="题干" min-width="10%" />
             <el-table-column prop="t_options" label="选项" min-width="10%" />
-            <el-table-column prop="t_answer" label="答案" min-width="10%" />
+            <el-table-column prop="t_answer" label="答案" min-width="10%" >
+                <template #default="scope">
+                  <span v-if="scope.row.t_answer === '0'">错误</span>
+                  <span v-else-if="scope.row.t_answer === '1'">正确</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="answerExplain" label="答案解析" min-width="10%" />
             <el-table-column prop="createTime" label="录入日期" min-width="10%" />
             <el-table-column label="操作列" width="250" min-width="28%">
@@ -119,11 +125,12 @@ import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { Delete } from "@element-plus/icons-vue";
 import store from '@/store'
 import { getymdhms } from "@/utils/auth";
-import { getQuestionList as getQuestionList} from '@/api/train.js'
+import { getQuestionList as getQuestionList, deleteQuestions as deleteQuestions} from '@/api/train.js'
 import { useRouter } from 'vue-router';
 const router = useRouter();
+const multipleTableRef = ref();
+const multipleSelection=ref ([])
 let examineQuestionData =  reactive({
-    multipleTableRef: ref(),
     searchValue:{
         courseName:'',
         questionType:'',
@@ -178,6 +185,7 @@ const queryTableData = () => {
           let data = res.body;
           examineQuestionData.table.tableData=data&&data.data?data.data:[];
           examineQuestionData.table.total = data&&data.total?data.total:0;
+          handleRowSelection(examineQuestionData.table.tableData)
         }else{
             ElNotification({
               title: 'Warning',
@@ -225,7 +233,9 @@ const handleEdit = (index, row) => {
 
 //查看
 const handleLook = (row)=>{
-
+  examineQuestionData.dialog.title = "查看";
+  examineQuestionData.dialog.dialogTableValue = JSON.parse(JSON.stringify(row));
+  examineQuestionData.dialog.dialogFormVisible = true;
 }
 
 const getRowKeys=(row)=> {
@@ -233,14 +243,15 @@ const getRowKeys=(row)=> {
 }
 let selectedObj = {}
 const handleSelect = (selection,row)=>{
-  if(!selection.some((item)=>{ item.id === row.id})){
-    delete selectedObj[row.id]
+  console.log(selection)
+  if(!selection.some((item)=>{ item.questionId === row.questionId})){
+    delete selectedObj[row.questionId]
   }
 }
 const handleRowSelection=(data)=>{
   if(data){
       data.forEach((item)=>{
-        if(selectedObj[item.id]){
+        if(selectedObj[item.questionId]){
           nextTick(()=>{
             multipleTableRef.value.toggleRowSelection(item,true)
           })
@@ -254,17 +265,18 @@ const handleRowSelection=(data)=>{
 const  handleSelectionChange=(val)=> {
       //全选取消
       if(val.length === 0){
-        state.tableData1.forEach((item)=>{
-          delete selectedObj[item.id]
+        examineQuestionData.table.tableData.forEach((item)=>{
+          delete selectedObj[item.questionId]
         })
       }
       //勾选数据
       selectedObj={}
       val.forEach((item) => {
-        selectedObj[item.id] = item
+        selectedObj[item.questionId] = item
       })
       //获取所有分页勾选的数据
       multipleSelection.value = [];
+      let arr = []
         for(const key in selectedObj){
           multipleSelection.value.push(selectedObj[key])
         }
@@ -272,6 +284,39 @@ const  handleSelectionChange=(val)=> {
 //批量删除
 const deleteAll = ()=>{
      console.log(multipleSelection._rawValue)  //当前所选中的用户id
+     let arr = [];
+     if(multipleSelection._rawValue.length > 0){
+       multipleSelection._rawValue.forEach((item,index)=>{
+         arr.push(item.questionId)
+       })
+     }
+     console.log(arr)
+     let obj = {
+       questionIds:arr
+     }
+     deleteQuestions(obj).then((res) => {
+       if(res.code === 200){
+           if(examineQuestionData.table.tableData.length === 1&& examineQuestionData.table.pageIndex>1){
+              examineQuestionData.table.pageIndex = examineQuestionData.table.pageIndex -1;
+            }
+             ElNotification({
+              title: '删除成功',
+              message: '删除成功',
+              type: 'Success',
+            })
+            multipleTableRef.value.clearSelection()
+            queryTableData();
+       }else{
+            ElNotification({
+              title: 'Warning',
+              message: res.message?res.message:'服务器异常',
+              type: 'warning',
+            })
+            if(res.code === 100007 ||  res.code === 100008){
+                    store.dispatch('app/logout')
+                }
+        }
+     })
 }
 </script>
 <style  lang = 'less' scoped>
@@ -364,5 +409,8 @@ const deleteAll = ()=>{
 .searchbutton{
   float: right;
 }
-
+.deleteAll{
+  margin-right: 16px;
+  border: 1px solid #DADFE6;
+}
 </style>

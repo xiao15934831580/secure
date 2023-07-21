@@ -112,6 +112,7 @@
     </div>
     <!-- 编辑 -->
     <Dialog
+      v-if="examineData.dialog.dialogFormVisible"
       v-model="examineData.dialog.dialogFormVisible"
       :dialogFormVisible="examineData.dialog.dialogFormVisible"
       :dialogTitle="examineData.dialog.title"
@@ -119,7 +120,7 @@
     ></Dialog>
   </div>
   <div class="totalStyle" v-if="!examineData.isShowList">
-        <Startexamine :examineContent = 'examineData.examineContent'></Startexamine>
+        <Startexamine :examineContent = 'examineData.examineContent' @callback = 'callback'></Startexamine>
   </div>
 </template>
 <script setup>
@@ -266,17 +267,18 @@ const handleDelete = (index, row) => {
 };
 //查看
 const handleLook = (row)=>{
-  router.push({
-        path:'/course',
-        query:{
-          id: row.planId
-        }
-  })
+  examineData.dialog.title = "查看";
+  examineData.dialog.dialogTableValue = JSON.parse(JSON.stringify(row));
+  examineData.dialog.dialogFormVisible = true;
 }
 //开始考试
 const examineStart = (row)=>{
   examineData.isShowList = false;
   examineData.examineContent = row;
+}
+const callback = () => {
+    console.log("111callback")
+    examineData.isShowList = true;
 }
 </script>
 <style  lang = 'less' scoped>

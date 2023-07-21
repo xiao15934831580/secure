@@ -10,7 +10,7 @@
       draggable
     >
       <div>
-        <div style="margin-top:24px;">
+        <div>
           <el-form
             :model="dialogData.formData"
             :inline="true"
@@ -22,7 +22,10 @@
             scroll-to-error="true"
           >
             <div class="basicstyle">
-                <el-form-item label="考核课程名称" prop="courseId" required>
+              <div class="itemStyle">
+                    <p class="titleName">考题</p>
+                    <p class="tishi">单选题3分/题,多选题5分/题,判断题2分/题</p>
+                    <el-form-item label="考核课程名称" prop="courseIds" required>
                     <el-select
                     :disabled="dialogData.props.title === '查看'"
                     v-model="dialogData.formData.courseIds"
@@ -37,14 +40,17 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="考试题型" prop="questionType" required>
-                    <el-select
+                    <!-- <el-select
                     :disabled="dialogData.props.title === '查看'"
                     v-model="dialogData.formData.questionType"
                     placeholder="请选择考核方式"
                     >
                         <el-option v-for="item in dialogData.dropdown.questionType" :key="item.value" :label="item.label" :value="item.value" required>
                         </el-option>
-                    </el-select>
+                    </el-select> -->
+                    <el-radio-group :disabled="dialogData.props.title === '查看'" v-model="dialogData.formData.questionType">
+                        <el-radio v-for="item in dialogData.dropdown.questionType" :key="item.value" :label="item.value"  required>{{item.label}}</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="题干" prop="question" required>
                     <el-input
@@ -54,17 +60,10 @@
                     v-model="dialogData.formData.question"
                     />
                 </el-form-item>
-                <div>
-                   <div class="answerTitle">
-                     <p class="answerOptions">答题选项</p>
-                     <!-- <p @click="addOptions" class="addOptions">新增答题选项</p>  -->
-                     <el-button
-                        class="addOptions"
-                        @click="addOptions()"
-                        type="success"
-                        >新增答题选项</el-button>
-                   </div>
-                   <el-form-item class="optionBox" v-for="  (item,index) in dialogData.formData.options" 
+              </div>
+                <div v-if="dialogData.formData.questionType != 2" class="itemStyle">
+                    <p class="titleName">考题选项</p>
+                    <el-form-item class="optionBox" v-for="  (item,index) in dialogData.formData.options" 
                                 :label="item.key"  
                                 :key = 'index'
                                 :prop="'options.' + index + '.value'"
@@ -76,29 +75,43 @@
                               placeholder="请输入选项内容"
                               v-model= 'item.value'
                               />
-                              <el-icon :size = '20' @click.prevent="removeOption(item,index)"><Remove /></el-icon>
+                              <el-icon v-if="dialogData.props.title !== '查看'" :size = '20' @click.prevent="removeOption(item,index)"><Remove /></el-icon>
                     </el-form-item>
+                            <el-button
+                                :disabled="dialogData.props.title === '查看'"
+                                class="addOptions"
+                                @click="addOptions()"
+                                type="success"
+                                > + 新增答题选项</el-button>
+                    
                 </div>
-                <el-form-item label="答案" prop="answer" required>
-                    <el-select
-                    :disabled="dialogData.props.title === '查看'"
-                    v-model="dialogData.formData.answer"
-                    :multiple = "true"
-                    placeholder="请选择答案选项"
-                    >
-                        <el-option v-for="(item,index) in dialogData.formData.optionKeys" :key="index" :label="item" :value="item" required>
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="答案解析" prop="answerExplain" required>
-                    <el-input
-                    type="textarea"
-                    :disabled="dialogData.props.title === '查看'"
-                    placeholder="请输入答案解析"
-                    v-model="dialogData.formData.answerExplain"
-                    />
-                </el-form-item>
-
+                 <div class="itemStyle">
+                        <p class="titleName">考题答案</p>
+                        <el-form-item label="正确答案" prop="answer" required>
+                            <el-select
+                            v-if="dialogData.formData.questionType != 2"
+                            :disabled="dialogData.props.title === '查看'"
+                            v-model="dialogData.formData.answer"
+                            :multiple = "true"
+                            placeholder="请选择答案选项"
+                            >
+                                <el-option v-for="(item,index) in dialogData.formData.optionKeys" :key="index" :label="item" :value="item" required>
+                                </el-option>
+                            </el-select>
+                            <el-radio-group v-if="dialogData.formData.questionType === 2" :disabled="dialogData.props.title === '查看'" v-model="dialogData.formData.answer">
+                                <el-radio  :label="'1'"  required>正确</el-radio>
+                                <el-radio  :label="'0'"  required>错误</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="答案解析" prop="answerExplain" required>
+                            <el-input
+                            type="textarea"
+                            :disabled="dialogData.props.title === '查看'"
+                            placeholder="请输入答案解析"
+                            v-model="dialogData.formData.answerExplain"
+                            />
+                        </el-form-item>
+                 </div>   
             </div>
           </el-form>
         </div>
@@ -129,11 +142,11 @@ import { getCourses as getCourses,operateQuestion as operateQuestion} from '@/ap
 const emits = defineEmits(["update:modelValue"]);
 const addform = ref('');
 const dialogData = reactive({
-    formLabelWidth:"40%",
+    formLabelWidth:"30%",
     defaultTime : new Date(2000, 1, 1, 12, 0, 0),
     sortList: ["A", "B", "C", "D", "E", "F", "G", "H"],
     rules:{
-        courseId:[{ required: true, message: "请选择考核课程名称", trigger: "change" }],
+        courseIds:[{ required: true, message: "请选择考核课程名称", trigger: "change" }],
         questionType:[{ required: true, message: "请选择考试题型", trigger: "change" }],
         question:[{ required: true, message: "请输入题干", trigger: "blur" }],
         answer:[{ required: true, message: "请选择答案选项", trigger: "change" }],
@@ -147,13 +160,13 @@ const dialogData = reactive({
     dropdown:{
         courseName:[],
         questionType:[{
-                      label: '单选',
+                      label: '单选题',
                       value: 0
                     },{
-                      label: '多选',
+                      label: '多选题',
                       value: 1
                     },{
-                      label: '判断',
+                      label: '判断题',
                       value: 2
                     }],
     },
@@ -226,6 +239,10 @@ watch(
     //  getData();
     if (dialogData.props.title === "编辑" || dialogData.props.title === "查看"){
         dialogData.formData = props.dialogTableValue;
+        if(dialogData.formData.questionType === 2){
+            let arr = JSON.parse(JSON.stringify(dialogData.formData.answer))
+            dialogData.formData.answer = Array.isArray(arr)? arr.join(''):arr;
+        }
         console.log(dialogData.formData)
         }else{
           dialogData.formData= {
@@ -338,9 +355,9 @@ const success = (addform) => {
     if (valid) {
       let obj = JSON.parse(JSON.stringify(dialogData.formData));
       console.log(obj)
-      // obj.examineBeginTime = obj.examineBeginTime?getymdhms(obj.examineBeginTime):'';
-      // obj.examineEndTime = obj.examineEndTime?getymdhms(obj.examineEndTime): "";
-      // obj.evaluation = ''
+      if(obj.questionType === 2){
+          obj.answer = obj.answer.split('')
+      }
       operateQuestion(obj).then((res)=>{
         if(res.code ===200){
             close()
@@ -443,7 +460,8 @@ const success = (addform) => {
   margin-bottom: 16px;
 }
 .addOptions{
-  float: right;
+    margin-left: 160px;
+    margin-bottom: 16px;
 }
 .optionBox{
   :deep(.el-form-item__content){
@@ -455,5 +473,22 @@ const success = (addform) => {
   :deep(.el-icon){
     margin: 0 16px;
   }
+}
+.itemStyle{
+    .titleName{
+        color: #4B515B;
+        font-size: 14px;
+        padding-left: 8px;
+        margin-left: 8px;
+        border-left: 5px solid #2E83FC;
+        margin-bottom: 16px;
+        
+    }
+    .tishi{
+        margin-bottom: 16px;
+        color: #F46B5A;
+        font-size: 12px;
+    }
+
 }
 </style>

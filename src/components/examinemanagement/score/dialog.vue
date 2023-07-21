@@ -4,20 +4,20 @@
         <div class="tablestyle">
             <div class="titleStyle">
                 <p class="leftTitle">
-                    <span class="callback" @click="callback()">返回</span>
+                    <span class="callback" @click="callback">返回</span>
                     {{dialogData.examineContent.examineTypeStr}}：{{dialogData.examineContent.courseName}}&nbsp;(总分数：{{dialogData.examineContent.gradesSum}} , 及格线：{{dialogData.examineContent.passCriteria}})</p>
-                <el-button type="primary"   @click="handleBuild">交卷</el-button>
             </div>
             <div class="bottomBox">
                 <div class="test_paper">
                     <div class="test_questions">
                         <el-form class="test_form" ref="form" :model="dialogData.answers" label-width="120px">
                             <el-row v-for="(question, index) in dialogData.question" :key="index" :id="'question-' + index">
-                                <el-col :span="24">
-                                    <p class="test_options" v-if="question.questionType===0">【单选题】{{ index + 1 }}. {{ question.question }}</p>
-                                    <p class="test_options" v-else-if="question.questionType===1">【多选题】{{ index + 1 }}. {{ question.question }}</p>
-                                    <p class="test_options" v-if="question.questionType===2">【判断题】{{ index + 1 }}. {{ question.question }}</p>
+                                <el-col :span="24" >
+                                <p class="test_options" v-if="question.questionType===0">【单选题】{{ index + 1 }}. {{ question.question }}</p>
+                                <p class="test_options" v-else-if="question.questionType===1">【多选题】{{ index + 1 }}. {{ question.question }}</p>
+                                <p class="test_options" v-if="question.questionType===2">【判断题】{{ index + 1 }}. {{ question.question }}</p>
                                 </el-col>
+                        
                                 <el-col :span="24">
                                 <!-- 单选 -->
                                     <el-radio-group v-if="question.questionType === 0" v-model="dialogData.answers[question.questionId]">
@@ -38,13 +38,24 @@
                                         <el-radio label="0">错误</el-radio>
                                     </el-radio-group>
                                 </el-col>
+                                <div :span="24" class="answerBox">
+                                    <p>正确答案：{{question.t_answer}}</p>
+                                    <p class="mt-16"> 答案解析：{{question.t_options}}</p>
+                                </div>
                             </el-row>
                         </el-form>
                     </div>
                     <div class="answer">
-                        <div class="answer_time scoreState">
-                            <p> 距离考试结束还有：</p> 
-                            <p style="font-size:24px">{{dialogData.keepTime}}</p>
+                        <div class="answer_time " :class="{'unscoreState': dialogData.examineState === '不及格' ,'scoreState':  dialogData.examineState === '及格'|| dialogData.examineState === '优秀'}" >
+                            <div class="scoreBox">
+                                <p>{{dialogData.score}}</p>
+                                <p class="mt-16">得分</p>
+                            </div>
+                            <p class="borderStyle"></p>
+                            <div class="scoreBox">
+                                <p>{{dialogData.examineState}}</p>
+                                <p class="mt-16">等级</p>
+                            </div>
                         </div>
                         <div class="answer_sheet">
                             <p class="answer_card">答题卡</p>
@@ -65,31 +76,11 @@
             </div>
         </div>
     </div>
-    <div class="lz-dialog">
-        <el-dialog
-        ref="ruleFormRef"
-        :model-value="dialogData.showScore"
-        :title="考试分数"
-        :before-close="close"
-        width="10%"
-        :close-on-click-modal="false"
-        draggable
-        >
-            <div>
-                您本次的考试分数是：{{dialogData.score}}分
-            </div>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button   class="btn-mixins dia-suc" @click="close" >确定</el-button>
-                </span>
-            </template>
-        </el-dialog>
-      </div>
 </template>
 <script  setup>
-import { defineProps, ref } from "vue";
-import { reactive, watch, defineEmits ,onMounted} from "vue";
-import {extractQuestions as extractQuestions, findExamineGrade as findExamineGrade} from "@/api/train.js"
+import { defineProps, ref,defineEmits } from "vue";
+import { reactive, watch,onMounted } from "vue";
+import {getExtract as getExtract} from "@/api/train.js"
 import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -98,7 +89,7 @@ let props = defineProps({
     type: Object,
     default: () => {},
   },
-});
+}); 
 const emit = defineEmits(['callback'])
 const dialogData = reactive({
     examineContent: {},
@@ -111,12 +102,23 @@ const dialogData = reactive({
     min:60,
     sec:0,
     question: [],
-    score:''
+    score:'',
+    examineState:''
 })
 const getQusetion=(id)=>{
-    extractQuestions(id).then((res)=>{
+    let user = JSON.parse(localStorage.getItem('userData'))
+    getExtract(id,user.username).then((res)=>{
         if(res.code ===200){
-            dialogData.question = res.body;
+            dialogData.question = res.body.questionList;
+            dialogData.score = res.body.grade;
+            dialogData.examineState = res.body.examineState ===3?'不及格':res.body.examineState ===4?"及格":res.body.examineState === 5?'优秀':'';
+            dialogData.answers = res.body.respondenceMap;
+            Object.keys(dialogData.answers).forEach(key=>{
+                if(dialogData.answers[key].length ===1){
+                    dialogData.answers[key] = dialogData.answers[key].toString();
+                }
+            })
+            console.log(dialogData.answers)
         }else{
               ElNotification({
                 title: 'Warning',
@@ -137,42 +139,6 @@ watch(
   },
   { deep: true, immediate: true }
 );
-onMounted(() => {
-    startExamine()
-});
-const startExamine = () => {
-    let mydate = new Date();
-    mydate.setMinutes(mydate.getMinutes() + dialogData.examineContent.examineDuration);
-            dialogData.settime=mydate;
-            let time = setInterval(() => {
-                if (dialogData.flag == true) {
-                    clearInterval(time)
-                }
-                timeDown()
-            }, 100)
-
-}
-const timeDown = () =>{
-            const endTime = new Date(dialogData.settime);
-            const nowTime = new Date();
-            let leftTime = parseInt((endTime.getTime() - nowTime.getTime()) / 1000);
-            let d = parseInt(leftTime / (24 * 60 * 60));
-            let h = formate(parseInt(leftTime / (60 * 60) % 24));
-            let m = formate(parseInt(leftTime / 60 % 60));
-            let s = formate(parseInt(leftTime % 60));
-            if (leftTime <= 0) {
-                dialogData.flag = true;
-                alert("时间到，停止作答");
-            }
-            dialogData.keepTime = `${h}:${m}:${s}`;
-        }
-const   formate=(time) =>{
-            if (time >= 10) {
-                return time
-            } else {
-                return `0${time}`
-            }
-}
 
 const  scrollToQuestion=(index)=> {
         const questionEl = document.getElementById(`question-${index}`)
@@ -180,48 +146,7 @@ const  scrollToQuestion=(index)=> {
           questionEl.scrollIntoView({ behavior: 'smooth' })
         }
       }
-//交卷
-const handleBuild = () => {
-    const answerSheets = []
-    console.log(dialogData.answers)
-    for(let [questionId,answer] of Object.entries(dialogData.answers)){
-        if(typeof(answer) != "string"){
-            let b = JSON.parse(JSON.stringify(answer));
-            let c = []
-            for(let key in b){
-                c.push(b[key])
-            }
-            answer = c.toString()
-        }
-        answerSheets.push({questionId,answer})
-    }
-    let user = JSON.parse(localStorage.getItem('userData'))
-    let obj = {
-        answerSheets:answerSheets,
-        examineId:dialogData.examineContent.examineId
-    }
-    findExamineGrade(obj,user.username).then((res)=>{
-        if(res.code === 200){
-            console.log(res)
-            dialogData.score = res.body;
-            dialogData.showScore = true;
-            callback()
-        }else{
-            ElNotification({
-              title: 'Warning',
-              message: res.message?res.message:'服务器异常',
-              type: 'warning',
-            })
-            if(res.code === 100007 ||  res.code === 100008){
-                    store.dispatch('app/logout')
-                }
-        }
-    })
-}
-//关闭弹窗
-const close = () => {
-    dialogData.showScore = false;
-}
+
 //返回上一级
 const callback = () => {
     emit('callback') 
@@ -252,13 +177,14 @@ const callback = () => {
         width: 222px;
         .answer_time{
             height: 100px;
-            padding: 16px;
-            margin-bottom: 16px;
-            color: #ffffff;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: space-around;
+            margin-bottom: 16px;
+            padding: 16px;
+            .scoreBox{
+                color: #ffffff;
+            }
         }
         .answer_sheet{
             background-color: #F2F5FA;
@@ -271,8 +197,18 @@ const callback = () => {
         }
     }
 }
+.borderStyle{
+    height: 24px;
+    width: 1px;
+    background-color: #ffffff;
+}
+.unscoreState{
+    background-image: url('@/assets/image/scoreState.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
 .scoreState{
-    background-image: url('@/assets/image/examine.png');
+    background-image: url('@/assets/image/successScore.png');
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -354,5 +290,12 @@ const callback = () => {
     margin-right: 12px;
     padding: 0 12px;
     cursor: pointer;
+}
+.answerBox{
+    border: 1px solid rgba(255, 148, 88, 0.60);
+    padding: 16px;
+    width: 100%;
+    margin-bottom: 16px;
+    background-color: rgba(255, 148, 88, 0.08);
 }
 </style>

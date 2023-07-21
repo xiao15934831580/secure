@@ -92,7 +92,7 @@ export const operateExamine = (data) => {
 //获取课程总题数
 export const getQuestionNum = (courseId) => {
     return http({
-        url: '/hongyun-user/examine/getQuestionNum?courseId='+courseId,
+        url: '/hongyun-training/examine/getQuestionNum?courseId='+courseId,
         method: 'GET',
     })
 }
@@ -126,5 +126,54 @@ export const extractQuestions = (examineId) => {
     return http({
         url: '/hongyun-training/examine/extractQuestions?examineId='+examineId,
         method: 'GET',
+    })
+}
+//批量删除
+export const deleteQuestions = (data) => {
+    return http({
+        url: '/hongyun-training/examine/deleteQuestions',
+        method: 'DELETE',
+        data
+    })
+}
+/**************************分数查看与排名******************************** */
+//分数查看
+export const ranking = (data,username) => {
+    return http({
+        url: '/hongyun-training/examine/ranking',
+        method: 'POST',
+        headers: {'username' : username},
+        data
+    })
+}
+//查看考卷
+export const getExtract = (examineId,username) => {
+    return http({
+        url: '/hongyun-training/examine/getExtract?examineId='+examineId,
+        headers: {'username' : username},
+        method: 'GET',
+    })
+}
+//积分排名
+export const getPoints = (data) => {
+    return http({
+        url: '/hongyun-training/examine/getPoints',
+        method: 'POST',
+        data
+    })
+}
+/**************************作业许可与作业过程******************************** */
+export const getWorkPermitList = (data,username) => {
+    return http({
+        url: '/hongyun-training/workpermit/getWorkPermitList',
+        method: 'POST',
+        headers: {'username' : username},
+        data
+    })
+}
+export const deleteWorkPermit = (id) => {
+    return http({
+        url: `/hongyun-training/workpermit/deleteWorkPermit/${id}`,
+        method: 'DELETE',
     })
 }

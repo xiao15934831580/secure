@@ -4,28 +4,6 @@ const menulist = [
         menuName: '绩效考核和安全审计',
         path: 'safety',
         children: [
-            // {
-            //     path: 'custominfo',
-            //     menuName: '客户信息',
-            //     children: [
-            //         {
-            //             path: 'basicinfo',
-            //             menuName: '客户基础信息',
-            //         },
-            //         {
-            //             path: 'blacklist',
-            //             menuName: '黑名单客户信息',
-            //         },
-            //         {
-            //             path: 'maintain',
-            //             menuName: '客户维护与关怀',
-            //         },
-            //         {
-            //             path: 'powerstationinfo',
-            //             menuName: '客户电站信息',
-            //         }
-            //     ]
-            // },
             {
                 path: 'audit',
                 menuName: '安全审计',
@@ -70,7 +48,7 @@ const menulist = [
             },
             {
                 path: 'score',
-                menuName: '分数查看',
+                menuName: '分数查看及排名',
             },
         ]
     },
@@ -140,6 +118,10 @@ const menulist = [
         path: 'task',
         menuName: '作业许可和作业过程管理',
         children: [
+            {
+                path: 'workpermit',
+                menuName: '作业许可'
+            },
             {
                 path: 'incomplete',
                 menuName: '未完成作业票'

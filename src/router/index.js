@@ -132,10 +132,10 @@ const routes = [
       },
       {
         path: '/score',
-        name: '分数查看',
+        name: '分数查看及排名',
         component: () => import('../components/examinemanagement/score/score.vue'),
         meta: {
-          title: '分数查看',
+          title: '分数查看及排名',
         },
       },
   ]
@@ -242,12 +242,20 @@ const routes = [
   {
     path: '/task',
     name: '作业许可和作业过程管理',
-    redirect: '/incomplete',
+    redirect: '/workpermit',
     component: HomePage,
     meta: {
       title: '作业许可和作业过程管理',
     },
     children: [
+      {
+        path: '/workpermit',
+        name: '作业许可',
+        component: () => import('../components/task/workpermit/workpermit.vue'),
+        meta: {
+          title: '作业许可',
+        },
+      },
       {
         path: '/incomplete',
         name: '未完成作业票',

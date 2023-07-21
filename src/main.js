@@ -14,7 +14,8 @@ import md5 from 'js-md5';
 import * as Base64 from 'js-base64'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { dispatchEventStorage } from '@/utils/auth.js'
-
+import vueEsign from 'vue-esign'
+// Vue.use(vueEsign)
 const app = createApp(App)
 Object.keys(Icons).forEach((key) => {
     app.component(key, Icons[key]);
@@ -31,5 +32,6 @@ app.use(dispatchEventStorage)
 app.use(ElementPlus, { locale })
 .use(router)
 .use(store)
+.use(vueEsign)
 .mount('#app');
 
