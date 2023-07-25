@@ -82,13 +82,10 @@
                                                             </el-checkbox>                       
                                                         </p>
                                                     </span>
-
                                                 </div>
                                                 <p class="formItemStyle mt-16"><span class="labelStyle">图片:</span>{{dialogData.formData.courseId}}</p>
                                                 <p class="formItemStyle"><span class="labelStyle">确认人:</span>{{dialogData.formData.courseId}}</p>
-                                                
                                             </div>
-                                            
                                         </div>
                                     </el-tab-pane>
                                     <el-tab-pane label="安全信息交底" name="fivth">
@@ -103,7 +100,7 @@
                                                             </el-checkbox>                       
                                                         </p>
                                                     </span>
-                                                </div>
+                                            </div>
                                             <p class="formItemStyle"><span class="labelStyle">安全交底人:</span>{{dialogData.formData.courseId}}</p>
                                             <p class="titleName">接受安全交底人确认</p>
                                             <p class="formItemStyle"><span class="labelStyle">接受安全交底人:</span>{{dialogData.formData.courseId}}</p>
@@ -131,14 +128,13 @@
                                             :key="index"
                                             >
                                             <!-- {{ activity.content }} -->
-                                            <p class="timeline_title"> <span>{{activity.personType}}</span> <span>{{activity.timestamp}}</span></p> 
-                                            <p class="timeline_content">{{ activity.name }}</p> 
+                                                <p class="timeline_title"> <span>{{activity.personType}}</span> <span>{{activity.timestamp}}</span></p> 
+                                                <p class="timeline_content">{{ activity.name }}</p> 
                                             </el-timeline-item>
                                         </el-timeline>
                                  </div>
                             </div>
                             <div class="itemStyle mt-16 footerStyle">
-
                                 <el-button
                                     size="large"
                                     type="success"
@@ -155,8 +151,7 @@
                                     size="large"
                                     class="btn-mixins-clear-default"
                                     @click="close"
-                                    >&nbsp;&nbsp; 拒绝 &nbsp;&nbsp;</el-button
-                                >
+                                    >&nbsp;&nbsp; 拒绝 &nbsp;&nbsp;</el-button>
                             </div>
                         </div>
                 </div>
@@ -231,8 +226,8 @@
 </template>
 <script  setup>
 import { defineProps, ref,defineEmits } from "vue";
-import { reactive, watch,onMounted } from "vue";
-import {getExtract as getExtract} from "@/api/train.js"
+import { reactive, watch,onBeforeMount } from "vue";
+import {getWorkPermitInfo as getWorkPermitInfo} from "@/api/train.js"
 import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { useRouter } from 'vue-router';
 import { Plus } from '@element-plus/icons-vue'
@@ -240,16 +235,13 @@ const router = useRouter();
 const esign = ref('')
 const canvasContent = ref('')
 let props = defineProps({
-  hotworkContent: {
+  hotWorkId: {
     type: Object,
     default: () => {},
   },
 }); 
 const emit = defineEmits(['callback'])
 const dialogData = reactive({
-    hotworkContent: {
-        title: '新建'
-    },
     approveData: {
         dialogFormVisible:false,
         formLabelWidth:'50%',
@@ -303,7 +295,7 @@ const dialogData = reactive({
         passRate:[{ required: true, message: "请输入及格的百分比", trigger: "change" }]
     },
     props:{
-        title:'',
+        hotWorkId:'',
     },
     formData:{
         activeName:'first',
@@ -482,10 +474,28 @@ const getQusetion=(id)=>{
         }
     })
 }
+onBeforeMount(()=>{
+    let user = JSON.parse(localStorage.getItem('userData'))
+    getWorkPermitInfo(dialogData.props.hotWorkId,user.username).then((res)=>{
+        if(res.code ===200){
+            console.log(res)
+        }else{
+            ElNotification({
+                title: 'Warning',
+                message: res.message?res.message:'服务器异常',
+                type: 'warning',
+              })
+               if(res.message.indexOf('token已过期')>-1  ){
+                    store.dispatch('app/logout')
+                }
+        }
+    })
+
+})
 watch(
   () => props,
   () => {
-      
+        dialogData.props.hotWorkId = props.hotWorkId
         // dialogData.hotworkContent = props.hotworkContent
         // getQusetion(dialogData.hotworkContent.examineId)
   },
@@ -669,13 +679,6 @@ const approveclose = () => {
 }
 .padding-60{
     padding: 0px 60px;
-}
-.canvasBox{
-    // position: relative;
-    // top: 100px;
-    // width: 100%;
-    // margin: 0 auto;
-    // height: 200px;
 }
 
 .btn-box {

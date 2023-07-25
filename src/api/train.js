@@ -177,3 +177,18 @@ export const deleteWorkPermit = (id) => {
         method: 'DELETE',
     })
 }
+export const getWorkPermitInfo = (id,username) => {
+    return http({
+        url: '/hongyun-training/workpermit/getWorkPermitInfo?id='+id,
+        headers: {'username' : username},
+        method: 'GET',
+    })
+}
+export const uploadFile = (data) => {
+    return http({
+        url: '/hongyun-training/workpermit/uploadFile',
+        headers: {'Content-Type': 'multipart/form-data'},
+        method: 'POST',
+        data
+    })
+}

@@ -123,6 +123,8 @@
                             <template #default="scope">
                                 <el-button size="small" @click="handleLook(scope.row)"
                                 >查看</el-button>
+                                <el-button v-if="scope.row.rebuildFlg" size="small" @click="editData(scope.row)"
+                                >重建</el-button>
                             </template>
                         </el-table-column>
                         <template #empty>
@@ -157,7 +159,7 @@ import { getymd } from "@/utils/auth";
 import { getWorkPermitList as getWorkPermitList,deletePlan as deletePlan} from '@/api/train.js'
 import { useRouter } from 'vue-router';
 const router = useRouter();
-const emit = defineEmits(['handleLook','addData'])
+const emit = defineEmits(['handleLook','addData','editData'])
 let workData =  reactive({
     showForm:false,
     activeName:'first',
@@ -293,10 +295,16 @@ const addData=()=>{
         showHotworkAdd:true
     })
 }
+//重建
+const editData = () => {
+    emit('editData',{
+        showHotworkAdd:true
+    })
+}
 //查看
 const handleLook = (row)=>{
     emit('handleLook',{
-        examineContent:row,
+        hotWorkId:row.workId,
         showHotworkLook:true
     })
 }

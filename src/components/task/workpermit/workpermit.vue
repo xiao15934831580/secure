@@ -3,7 +3,7 @@
     <div class="tablestyle">
         <el-tabs v-model="hotwork.activeName" class="demo-tabs" @tab-click="handleClick">
             <el-tab-pane label="动火作业" name="first">
-                <Hotwork @addData = 'addData' @handleLook = 'handleLook'> </Hotwork>
+                <Hotwork @addData = 'addData' @handleLook = 'handleLook' @editData = 'editData'> </Hotwork>
             </el-tab-pane>
             <el-tab-pane label="受限空间" name="second">
                 <!-- <rank/> -->
@@ -14,8 +14,8 @@
     </div>
   </div>
     <div class="totalStyle" v-if="!hotwork.showList">
-        <Dialog v-if="hotwork.showHotworkAdd" @callback = 'callback'></Dialog>
-        <Detail v-if="hotwork.showHotworkLook" :hotworkContent = 'hotwork.hotworkContent' @callback = 'callback'></Detail>
+        <Dialog v-if="hotwork.showHotworkAdd" :title="hotwork.hotworkContent.title" @callback = 'callback'></Dialog>
+        <Detail v-if="hotwork.showHotworkLook" :hotWorkId = 'hotwork.hotworkContent.hotWorkId' @callback = 'callback'></Detail>
     </div>
 </template>
 <script setup>
@@ -29,7 +29,8 @@ let hotwork =  reactive({
     showHotworkAdd:false,
     activeName:'first',
     hotworkContent:{
-      title:''
+      title:'',
+      hotWorkId:''
     },
 })
 
@@ -39,13 +40,17 @@ const addData = (obj)=>{
   hotwork.showList = false;
   hotwork.hotworkContent.title = '新建';
 }
-
+//重建
+const editData = (obj)=>{
+  hotwork.showHotworkAdd = obj.showHotworkAdd;
+  hotwork.showList = false;
+  hotwork.hotworkContent.title = '重建';
+}
 // //查看
 const handleLook = (obj)=>{
     hotwork.showHotworkLook = obj.showHotworkLook;
     hotwork.showList = false;
-    // hotwork.hotworkContent = obj.hotworkContent;
-    hotwork.hotworkContent.title = '查看';
+    hotwork.hotworkContent.hotWorkId = obj.hotWorkId
 }
 const allFalse = ()=>{
   hotwork.showList = false;
