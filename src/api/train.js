@@ -177,9 +177,9 @@ export const deleteWorkPermit = (id) => {
         method: 'DELETE',
     })
 }
-export const getWorkPermitInfo = (id,username) => {
+export const getWorkPermitInfo = (workId,username) => {
     return http({
-        url: '/hongyun-training/workpermit/getWorkPermitInfo?id='+id,
+        url: '/hongyun-training/workpermit/getWorkPermitInfo?workId='+workId,
         headers: {'username' : username},
         method: 'GET',
     })
@@ -190,5 +190,67 @@ export const uploadFile = (data) => {
         headers: {'Content-Type': 'multipart/form-data'},
         method: 'POST',
         data
+    })
+}
+//新建作业许可
+export const operateWorkPermit = (data,username) => {
+    return http({
+        url: '/hongyun-training/workpermit/operateWorkPermit',
+        method: 'POST',
+        headers: {'username' : username},
+        data
+    })
+}
+//查看作业申请单位
+export const getCompanyList = () => {
+    return http({
+        url: '/hongyun-training/common/getCompanyList',
+        method: 'GET',
+    })
+}
+//查看动火方式
+export const getDataDictionaryList = (ids) => {
+    return http({
+        url: '/hongyun-training/common/getDataDictionaryList?ids='+ids,
+        method: 'GET',
+    })
+}
+//查看作业票
+export const getWorkNoList = () => {
+    return http({
+        url: '/hongyun-training/workpermit/getWorkNoList',
+        method: 'GET',
+    })
+}
+
+//查所有人员
+export const getUserList = () => {
+    return http({
+        url: '/hongyun-training/common/getUserList',
+        method: 'GET',
+    })
+}
+//获取审批模板
+export const getWorkTemplate = () => {
+    return http({
+        url: '/hongyun-training/workpermit/getWorkTemplate',
+        method: 'GET',
+    })
+}
+//电子流审批
+export const operateApprove = (data,username) => {
+    return http({
+        url: '/hongyun-training/approve/operateApprove',
+        method: 'POST',
+        headers: {'username' : username},
+        data
+    })
+}
+//作业许可重建
+export const writeWorkRebuild = (workId,username) => {
+    return http({
+        url: '/hongyun-training/workpermit/writeWorkRebuild?workId='+workId,
+        headers: {'username' : username},
+        method: 'GET',
     })
 }

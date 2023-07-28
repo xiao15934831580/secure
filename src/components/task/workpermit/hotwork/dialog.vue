@@ -27,26 +27,22 @@
                             <div class="itemStyle">
                                 <p class="headerMsg">申请信息</p>
                                 <div class="formItem">
-                                    <p class="titleName">考核课程</p>
+                                    <p class="titleName">申请信息</p>
                                     <el-form-item label="作业申请单位" prop="applyCompanyId" required>
                                         <el-select
                                         v-model="dialogData.formData.applyCompanyId"
                                         placeholder="请选择作业申请单位"
                                         clearable
                                         >
-                                        <el-option v-for="item in dialogData.dropdown.courseName" :key="item.courseId" :label="item.courseName" :value="item.courseId" required>
+                                        <el-option v-for="item in dialogData.dropdown.applyCompanyId" :key="item.id" :label="item.companyName" :value="item.id" required>
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item label="动火位置" prop="placeId" required>
-                                        <el-select
-                                        v-model="dialogData.formData.placeId"
-                                        placeholder="请选择动火位置"
-                                        clearable
-                                        >
-                                        <el-option v-for="item in dialogData.dropdown.courseName" :key="item.courseId" :label="item.courseName" :value="item.courseId" required>
-                                            </el-option>
-                                        </el-select>
+                                    <el-form-item label="动火地点" prop="place" required>
+                                        <el-input
+                                        placeholder="请输入动火地点"
+                                        v-model="dialogData.formData.place"
+                                        />
                                     </el-form-item>
                                     <el-form-item label="动火部位" prop="part" required>
                                         <el-input
@@ -56,26 +52,27 @@
                                     </el-form-item>
                                     <el-form-item label="动火作业级别" prop="level" required>
                                         <el-radio-group v-model="dialogData.formData.level">
-                                            <el-radio  :label="'0'"  required>特级</el-radio>
-                                            <el-radio  :label="'1'"  required>一级</el-radio>
-                                            <el-radio  :label="'2'"  required>二级</el-radio>
+                                            <el-radio  :label="0"  required>特级</el-radio>
+                                            <el-radio  :label="1"  required>一级</el-radio>
+                                            <el-radio  :label="2"  required>二级</el-radio>
                                         </el-radio-group>
                                     </el-form-item>
-                                    <el-form-item label="动火方式" prop="methodId" required>
+                                    <el-form-item label="动火方式" prop="methodIds" required>
                                         <el-select
-                                        v-model="dialogData.formData.methodId"
+                                        v-model="dialogData.formData.methodIds"
                                         placeholder="请选择动火方式"
+                                        multiple
                                         clearable
                                         >
-                                        <el-option v-for="item in dialogData.dropdown.courseName" :key="item.courseId" :label="item.courseName" :value="item.courseId" required>
+                                        <el-option v-for="item in dialogData.dropdown.methodIds" :key="item.id" :label="item.dataValue" :value="item.id" required>
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item label="动火作业实施时间" prop="beginAndEndTime" required>
+                                    <el-form-item label="动火作业实施时间" prop="workTime" required>
                                         <el-date-picker
                                             :disabled="dialogData.props.title === '查看'"
-                                            v-model="dialogData.formData.beginAndEndTime"
-                                            type="daterange"
+                                            v-model="dialogData.formData.workTime"
+                                            type="datetimerange"
                                             start-placeholder="请选择开始时间"
                                             end-placeholder="请选择结束时间"
                                             :default-time="defaultTime"
@@ -100,12 +97,12 @@
                                     </el-form-item>               
                                     <el-form-item label="是否需要开锁" prop="workLock" required>
                                         <el-radio-group v-model="dialogData.formData.workLock">
-                                            <el-radio  :label="'0'"  required>否</el-radio>
-                                            <el-radio  :label="'1'"  required>是</el-radio>
+                                            <el-radio  :label="0"  required>否</el-radio>
+                                            <el-radio  :label="1"  required>是</el-radio>
                                         </el-radio-group>
                                     </el-form-item>        
                                     <p class="titleName">关联作业票</p>
-                                    <el-form-item class="workCard" v-for="  (item,index) in dialogData.formData.options"
+                                    <!-- <el-form-item class="workCard" v-for="  (item,index) in dialogData.formData.options"
                                                     label= "作业票"
                                                     :key = 'index'
                                                     :prop="'options.' + index + '.value'"
@@ -125,16 +122,26 @@
                                         class="addOptions"
                                         @click="addOptions()"
                                         type="success"
-                                        > + 增加选项</el-button>
+                                        > + 增加选项</el-button> -->
+                                    <el-form-item label="选择作业票" prop="relationWorkNos" required>    
+                                            <el-cascader
+                                            v-model="dialogData.formData.relationWorkNos"
+                                            placeholder="请选择作业票"
+                                            :options="dialogData.dropdown.options"
+                                            :props="cascaderprops"
+                                            filterable
+                                            />
+                                    </el-form-item>
                                     <p class="titleName">图片/附件</p>      
                                     <el-form-item label="图片">
                                         <el-upload
-                                            v-model:file-list="dialogData.formData.images"
+                                            v-model:file-list="dialogData.formData.imageList"
                                             action="api/hongyun-training/workpermit/uploadFile"
                                             list-type="picture-card"
                                             :on-preview="handlePictureCardPreview"
                                             :on-remove="handleRemoveImage"
                                             :beforeUpload="beforeAvatarUpload"
+                                            :on-exceed="handleImage"
                                             :on-success="uploadSucceed"
                                             :limit="4"
                                         >
@@ -151,7 +158,7 @@
                                     </el-form-item>        
                                     <el-form-item label="附件">
                                         <el-upload
-                                            v-model:file-list="dialogData.formData.attachments"
+                                            v-model:file-list="dialogData.formData.attachmentsList"
                                             class="upload-demo"
                                             action="api/hongyun-training/workpermit/uploadFile"
                                             multiple
@@ -182,9 +189,10 @@
                                         <el-select
                                         v-model="dialogData.formData.guardianUserIds"
                                         placeholder="请选择单位监护人"
+                                        multiple
                                         clearable
                                         >
-                                        <el-option v-for="item in dialogData.dropdown.courseName" :key="item.courseId" :label="item.courseName" :value="item.courseId" required>
+                                        <el-option v-for="item in dialogData.dropdown.person" :key="item.userId" :label="item.realName" :value="item.userId" required>
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
@@ -192,10 +200,11 @@
                                         <el-select
                                         :disabled="dialogData.props.title === '查看'"
                                         v-model="dialogData.formData.safetyUserIds"
+                                        multiple
                                         placeholder="请选择安全交底人"
                                         clearable
                                         >
-                                        <el-option v-for="item in dialogData.dropdown.courseName" :key="item.courseId" :label="item.courseName" :value="item.courseId" required>
+                                        <el-option v-for="item in dialogData.dropdown.person" :key="item.userId" :label="item.realName" :value="item.userId"  required>
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
@@ -206,7 +215,7 @@
                                         placeholder="请选择作业单位"
                                         clearable
                                         >
-                                        <el-option v-for="item in dialogData.dropdown.courseName" :key="item.courseId" :label="item.courseName" :value="item.courseId" required>
+                                        <el-option v-for="item in dialogData.dropdown.applyCompanyId" :key="item.id" :label="item.companyName" :value="item.id" required>
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
@@ -221,12 +230,27 @@
                                         :disabled="dialogData.props.title === '查看'"
                                         v-model="dialogData.formData.templateId"
                                         placeholder="请选择审批模板"
+                                        @change="changeTemplate"
                                         clearable
                                         >
-                                        <el-option v-for="item in dialogData.dropdown.courseName" :key="item.courseId" :label="item.courseName" :value="item.courseId" required>
+                                        <el-option v-for="item in dialogData.dropdown.WorkTemplate" :key="item.templateId" :label="item.templateName" :value="item.templateId" required>
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
+                                </div>
+                                <div class="changeTemplateBox">
+                                    <template v-for="(item,index) in dialogData.dropdown.templateList" :key="item.index">
+                                        <div class="templatebox" > 
+                                            <div class="head_image">
+                                                <el-icon :size="20"><Avatar /></el-icon>
+                                            </div>
+                                            <div class="msg_info">
+                                                <p class="jobType">{{item.dutyName}}</p>
+                                                <p class="realname">{{item.realName}}</p>
+                                            </div>
+                                        </div>
+                                        <span class="mrl" v-if="index+1 < dialogData.dropdown.templateList.length"> > </span>
+                                    </template>
                                 </div>
                             </div>
                             <div class="itemStyle mt-16 footerStyle">
@@ -250,133 +274,201 @@
     </div>
 </template>
 <script  setup>
-import { defineProps, ref,defineEmits } from "vue";
-import { reactive, watch,onMounted } from "vue";
-import {getExtract as getExtract,uploadFile as uploadFile} from "@/api/train.js"
+import { defineProps, ref,defineEmits,onBeforeMount } from "vue";
+import { reactive, watch,onUpdated } from "vue";
+import {operateWorkPermit as operateWorkPermit,uploadFile as uploadFile,getDataDictionaryList as getDataDictionaryList, getWorkNoList as getWorkNoList, getUserList as getUserList, getWorkTemplate as getWorkTemplate, writeWorkRebuild as writeWorkRebuild} from "@/api/train.js"
 import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { useRouter } from 'vue-router';
-import { Plus } from '@element-plus/icons-vue'
+import { Plus,Avatar } from '@element-plus/icons-vue'
+import { getymdhms } from '@/utils/auth'
 const router = useRouter();
 const addform = ref('');
+const user = JSON.parse(localStorage.getItem('userData')) 
 let props = defineProps({
   title: {
     type: String,
   },
+  dropdown:{
+      type:Object,
+  },
+    hotWorkId: {
+    type: Number,
+  },
+
 }); 
+const cascaderprops = {
+  multiple: true,
+}
 const emit = defineEmits(['callback'])
 const dialogData = reactive({
     dialogVisible:false,
     dialogImageUrl:'',
     dropdown:{
-        headline:[],
-        courseName:[],
-        examineType:[{
-                label: '日考',
-                value: 0
-              },{
-                label: '周考',
-                value: 1
-              },{
-                label: '月考',
-                value: 2
-              },{
-                label: '年考',
-                value: 3
-              }]
+        applyCompanyId:[{
+                companyName: '新建',
+                id: 0
+            }],
+        methodIds:[],
+        options:[],
+        person:[],
+        WorkTemplate:[],
+        templateList: []
     },
     rules:{
         applyCompanyId:[{ required: true, message: "请选择作业申请单位", trigger: "change" }],
-        placeId:[{ required: true, message: "请选择动火位置", trigger: "change" }],
+        place:[{ required: true, message: "请选择动火位置", trigger: "change" }],
         part:[{ required: true, message: "请输入动火部位", trigger: "blur" }],
         level:[{ required: true, message: "请选择动火作业级别", trigger: "change" }],
-        methodId:[{ required: true, message: "请选择请选择动火方式", trigger: "change" }],
-        beginAndEndTime:[{ required: true, message: "请选择动火作业实施时间", trigger: "change" }],
+        methodIds:[{ required: true, message: "请选择请选择动火方式", trigger: "change" }],
+        workTime:[{ required: true, message: "请选择动火作业实施时间", trigger: "change" }],
         content:[{ required: true, message: "请输入作业内容", trigger: "blur" }],
         riskResult:[{ required: true, message: "请输入风险辨识结果", trigger: "blur" }],
         workLock:[{ required: true, message: "请选择是否需要开锁", trigger: "change" }],
         guardianUserIds:[{ required: true, message: "请选择单位监护人", trigger: "change" }],
         safetyUserIds:[{ required: true, message: "请选择安全交底人", trigger: "change" }],
         workCompanyId:[{ required: true, message: "请选择作业单位", trigger: "change" }],
-        templateId:[{ required: true, message: "请选择审批模板", trigger: "change" }]
+        templateId:[{ required: true, message: "请选择审批模板", trigger: "change" }],
+        relationWorkNos:[{ required: true, message: "请选择作业票", trigger: "change" }],
     },
     props:{
         title:'',
     },
     formData:{
         applyCompanyId:'',
-        placeId:'',
+        place:'',
         part:'',
         level:'',
-        methodId:'',
-        beginAndEndTime:'',
+        methodIds:'',
+        workTime:'',
         content:'',
         riskResult:'',
         workLock:0,
-        images:[
-            {
-            // name: 'food.jpeg',
-            url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-        }
-        ],
+        images:[],
         attachments:[],
+        attachmentsList:[],
         guardianUserIds:0,
         safetyUserIds:0,
         workCompanyId:'',
-        templateId:0,
-        options:[{
-          key: '选择作业票1',
-          value:''
-        },{
-          key: '选择作业票2',
-          value:''
-        },{
-          key: '选择作业票2',
-          value:''
-        }],
-        // fileList:[{
-        //     name: 'food.jpeg',
-        //     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-        // },{
-        //     name: 'food.jpeg',
-        //     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-        // },{
-        //     name: 'food.jpeg',
-        //     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-        // },]
+        templateId:'',
+        relationWorkNos:[],
+        imageList:[]
     }
 })
-const getQusetion=(id)=>{
-    let user = JSON.parse(localStorage.getItem('userData'))
-    getExtract(id,user.username).then((res)=>{
-        if(res.code ===200){
-            dialogData.question = res.body.questionList;
-            dialogData.score = res.body.grade;
-            dialogData.examineState = res.body.examineState ===3?'不及格':res.body.examineState ===4?"及格":res.body.examineState === 5?'优秀':'';
-            dialogData.answers = res.body.respondenceMap;
-            Object.keys(dialogData.answers).forEach(key=>{
-                if(dialogData.answers[key].length ===1){
-                    dialogData.answers[key] = dialogData.answers[key].toString();
-                }
+//动火方式
+const getDataDictionary = () => {
+        getDataDictionaryList(5).then((res)=>{
+        if(res.code === 200){
+            dialogData.dropdown.methodIds = res.body;
+        }else {
+            ElNotification({
+              title: 'Warning',
+              message: res.message?res.message:'服务器异常',
+              type: 'warning',
             })
-            console.log(dialogData.answers)
-        }else{
-              ElNotification({
-                title: 'Warning',
-                message: res.message?res.message:'服务器异常',
-                type: 'warning',
-              })
-               if(res.message.indexOf('token已过期')>-1  ){
+            if(res.code === 100007 ||  res.code === 100008){
                     store.dispatch('app/logout')
                 }
         }
     })
 }
+//获取作业票
+const getWorkNo = () => {
+        getWorkNoList().then((res)=>{
+        if(res.code === 200){
+            dialogData.dropdown.options = res.body;
+        }else {
+            ElNotification({
+              title: 'Warning',
+              message: res.message?res.message:'服务器异常',
+              type: 'warning',
+            })
+            if(res.code === 100007 ||  res.code === 100008){
+                    store.dispatch('app/logout')
+                }
+        }
+    })
+}
+//获取审批模板
+const WorkTemplate = ()=>{
+    getWorkTemplate().then((res) => {
+        if(res.code === 200){
+            dialogData.dropdown.WorkTemplate = res.body;
+        }else {
+            ElNotification({
+              title: 'Warning',
+              message: res.message?res.message:'服务器异常',
+              type: 'warning',
+            })
+            if(res.code === 100007 ||  res.code === 100008){
+                    store.dispatch('app/logout')
+                }
+        }
+    })
+}
+/**
+ * 切换审批模板
+ */
+const changeTemplate = (val)=>{
+    let index = dialogData.dropdown.WorkTemplate.findIndex((res)=>{return res.templateId === val});
+    if(index>-1){
+        dialogData.dropdown.templateList = dialogData.dropdown.WorkTemplate[index].dutyNames
+    }
+    
+    console.log(dialogData.dropdown.templateList)
+}
+// 查看人员
+const getUser = ()=>{
+    getUserList().then((res) => {
+        if(res.code === 200){
+            dialogData.dropdown.person = res.body;
+        }else {
+            ElNotification({
+              title: 'Warning',
+              message: res.message?res.message:'服务器异常',
+              type: 'warning',
+            })
+            if(res.code === 100007 ||  res.code === 100008){
+                    store.dispatch('app/logout')
+                }
+        }
+    })
+}
+onBeforeMount(()=>{
+    getDataDictionary()
+    getWorkNo()
+    getUser()
+    WorkTemplate()
+})
+onUpdated(() => {
+    if(dialogData.props.title === '重建'){
+        setTimeout(() => {
+            changeTemplate(dialogData.formData.templateId)
+        },1000)
+    }
+});
 watch(
   () => props,
   () => {
       dialogData.props.title = props.title;
-        // dialogData.hotworkContent = props.hotworkContent
-        // getQusetion(dialogData.hotworkContent.examineId)
+      dialogData.dropdown.applyCompanyId =props.dropdown.applyCompanyId;
+      if(dialogData.props.title === '重建'){
+          writeWorkRebuild(props.hotWorkId,user.username).then((res) => {
+              if(res.code ===200){
+                    dialogData.formData = res.body;
+                    dialogData.formData.imageList = dialogData.formData.images;
+                    dialogData.formData.attachmentsList = dialogData.formData.attachments
+                }else{
+                    ElNotification({
+                        title: 'Warning',
+                        message: res.message?res.message:'服务器异常',
+                        type: 'warning',
+                    })
+                    if(res.message.indexOf('token已过期')>-1 ){
+                            store.dispatch('app/logout')
+                        }
+                }
+          })
+      }
   },
   { deep: true, immediate: true }
 );
@@ -399,8 +491,9 @@ const  handleImage = (file)=>{
             let obj = {
                 url:res.body
             }
-            dialogData.formData.images.push(obj);
-            console.log(dialogData.formData.images)
+            console.log(obj)
+            // dialogData.formData.images.push(obj);
+            // console.log(dialogData.formData.images)
             // ElMessage({
             //   type: "success",
             //   message: "记载成功",
@@ -432,49 +525,67 @@ const beforeAvatarUpload = (file)=>{
         return false
       }
 }
+const uploadSucceed = (file)=>{
+
+    console.log(file)
+    let obj = {
+        url:file.body
+    }
+    dialogData.formData.images.push(obj);
+}
 /**
  * 附件处理
  */
 // 上传文件 数量判断 这里设置的只能上传一个文件
 const handleExceed = (files, fileList) => {
+    console.log(files)
     ElMessage.warning(
         `当前限制选择 4 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
         files.length + fileList.length
         } 个文件`
     )
 }
+//文件上传成功
+const uploadSuccess = (file,uploadFile)=>{
+    console.log(uploadFile)
+    let obj = {
+        name:uploadFile.name,
+        url:uploadFile.response.body
+    }
+    dialogData.formData.attachments.push(obj)
+}
 //文件预览
 const handlePreview = (uploadFile) => {
-    console.log(uploadFile)
-        let url  = analysisProxy(uploadFile).response.body
-        console.log('文件地址', url)
+        let url  = dialogData.props.title === '重建'? analysisProxy(uploadFile).url:analysisProxy(uploadFile).response.body
+        window.open(url)
 }
+
 /**
  * 表单提交
  */
 const success = (addform) => {
   if (!addform) return;
-    let obj = JSON.parse(JSON.stringify(dialogData.formData));
-    console.log(obj)
   addform.validate(async (valid) => {
     if (valid) {
       let obj = JSON.parse(JSON.stringify(dialogData.formData));
-      console.log(obj)
-      // obj.checkEndTime = obj.checkEndTime?getymdhms(obj.checkEndTime):''
-    //   operateCourse(obj).then((res)=>{
-    //     if(res.code ===200){
-    //         close()
-    //       }else{
-    //           ElNotification({
-    //             title: 'Warning',
-    //             message: res.message?res.message:'服务器异常',
-    //             type: 'warning',
-    //           })
-    //            if(res.message.indexOf('token已过期')>-1  ){
-    //                 store.dispatch('app/logout')
-    //             }
-    //       }
-    //   })
+      obj.beginTime = obj.workTime?getymdhms(obj.workTime[0]):'',
+      obj.endTime = obj.workTime?getymdhms(obj.workTime[1]):'',
+      obj.workType = 0
+      let user = JSON.parse(localStorage.getItem('userData')) 
+      operateWorkPermit(obj,user.username).then((res)=>{
+        if(res.code ===200){
+            callback()
+          }else{
+              ElNotification({
+                title: 'Warning',
+                message: res.message?res.message:'服务器异常',
+                type: 'warning',
+              })
+               if(res.message.indexOf('token已过期')>-1 ){
+                    store.dispatch('app/logout')
+                }
+          }
+      })
     } else {
       return false;
     }
@@ -504,6 +615,9 @@ const removeOption = (item,index)=>{
         width: 100%;
     }
     :deep(.upload-demo){
+        width: 100%;
+    }
+    :deep(.el-cascader){
         width: 100%;
     }
     .bg_color{
@@ -589,6 +703,44 @@ const removeOption = (item,index)=>{
     width: 100%;
     height: 100%;
     background-size: cover;
+}
+.changeTemplateBox{
+    padding: 0 56px 16px 160px;
+    .templatebox{
+        width: 180px;
+        height: 54px;
+        background-color: #EDF0F5;
+        border-radius: 4px;
+        align-content: center;
+         display: inline-flex;
+         margin-bottom: 16px;
+        .head_image{
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: #2E83FC;
+            color: #ffffff;
+            margin: 8px;
+            line-height: 38px;
+            text-align: center;
+        }
+        .msg_info{
+            .jobType{
+                color: #797F89;
+                font-size: 12px;
+                margin: 8px 0 4px 0;
+            }
+            .realname{
+                color: #1C222C;
+                font-size: 14px;
+            }
+        }
+    }
+    .mrl{
+        margin: 0 16px;
+        line-height: 54px;
+        color: #A9AFB9;
+    }
 }
 }
 

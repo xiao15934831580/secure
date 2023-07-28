@@ -26,19 +26,19 @@
                           <el-select class="w-10 m-2 mr-16" v-model="workData.searchValue.applyCompanyId" clearable  placeholder="请选择作业申请单位">
                               <el-option
                               v-for="item in workData.dropdown.applyCompanyId"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
+                              :key="item.id"
+                              :label="item.companyName"
+                              :value="item.id"
                               />
                           </el-select>
-                          <el-select class="w-10 m-2 mr-16" v-model="workData.searchValue.placeId" clearable  placeholder="请选择动火位置">
+                          <!-- <el-select class="w-10 m-2 mr-16" v-model="workData.searchValue.placeId" clearable  placeholder="请选择动火位置">
                               <el-option
                               v-for="item in workData.dropdown.placeId"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
                               />
-                          </el-select>
+                          </el-select> -->
                           <el-select class="w-10 m-2 mr-16" v-model="workData.searchValue.state" clearable  placeholder="请选择状态">
                               <el-option
                               v-for="item in workData.dropdown.state"
@@ -69,11 +69,11 @@
                         <el-table-column prop="sourceStr" label="来源" min-width="10%" />
                         <el-table-column prop="level" label="作业级别" min-width="10%" />
                         <el-table-column prop="applyCompanyId" label="作业申请单位" min-width="10%" />
-                        <el-table-column prop="placeId" label="动火位置" min-width="10%" />
+                        <!-- <el-table-column prop="placeId" label="动火位置" min-width="10%" /> -->
                         <el-table-column prop="methodId" label="动火方式" min-width="10%" />
-                        <el-table-column prop="beginAndEndTime" label="动火作业实施时间" min-width="10%" />
+                        <el-table-column prop="beginAndEndTime" label="动火作业实施时间" min-width="13%" />
                         <el-table-column prop="workCompanyId" label="作业单位" min-width="10%" />
-                        <el-table-column prop="createUser" label="提交人" min-width="10%" />
+                        <el-table-column prop="createUser" label="提交人" min-width="7%" />
                         <el-table-column prop="createTime" label="提交时间" min-width="10%" />
                         <el-table-column prop="state" label="状态" min-width="10%" >
                             <template #default="scope">
@@ -119,7 +119,7 @@
                                 </span>                                 
                             </template>
                         </el-table-column>
-                        <el-table-column label="操作列" width="250" min-width="28%">
+                        <el-table-column label="操作列" width="150" min-width="28%">
                             <template #default="scope">
                                 <el-button size="small" @click="handleLook(scope.row)"
                                 >查看</el-button>
@@ -156,7 +156,7 @@ import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { Delete } from "@element-plus/icons-vue";
 import store from '@/store'
 import { getymd } from "@/utils/auth";
-import { getWorkPermitList as getWorkPermitList,deletePlan as deletePlan} from '@/api/train.js'
+import { getWorkPermitList as getWorkPermitList,getCompanyList as getCompanyList} from '@/api/train.js'
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const emit = defineEmits(['handleLook','addData','editData'])
@@ -207,15 +207,15 @@ let workData =  reactive({
                         value: 1
                     }],
           applyCompanyId:[{
-                        label: '新建',
-                        value: 0
+                        companyName: '新建',
+                        id: 0
                     }, {
                         label: '重建',
                         value: 1
                     }],
           placeId:[{
-                        label: '新建',
-                        value: 0
+                        dataValue: '新建',
+                        id: 0
                     }, {
                         label: '重建',
                         value: 1
@@ -242,10 +242,7 @@ const queryTableData = () => {
   let obj = JSON.parse(JSON.stringify(workData.searchValue))
   obj.pageIndex = workData.table.pageIndex;
   obj.pageSize = workData.table.pageSize;
-  // let obj = {
-  //       pageIndex:workData.table.pageIndex,
-  //       pageSize:workData.table.pageSize
-  // }
+  obj.workType = 0;
   let user = JSON.parse(localStorage.getItem('userData'))
   getWorkPermitList(obj,user.username)
     .then((res)=>{
@@ -268,6 +265,23 @@ const queryTableData = () => {
     })
     .catch(()=>{})
 };
+const getCompany = ()=>{
+    getCompanyList().then((res)=>{
+        if(res.code === 200){
+            workData.dropdown.applyCompanyId = res.body;
+        }else {
+            ElNotification({
+              title: 'Warning',
+              message: res.message?res.message:'服务器异常',
+              type: 'warning',
+            })
+            if(res.code === 100007 ||  res.code === 100008){
+                    store.dispatch('app/logout')
+                }
+        }
+    })
+}
+
 watch(
     () => workData.dialog.dialogFormVisible,
     () => {
@@ -277,6 +291,9 @@ watch(
     },
     { deep: true, immediate: true }
 )
+onBeforeMount(()=>{
+    getCompany();
+})
 
 //切换一页显示多少条数据
 const handleSizeChange = (val) => {
@@ -292,13 +309,16 @@ const handleCurrentChange = (val) => {
 //新建
 const addData=()=>{
       emit('addData',{
-        showHotworkAdd:true
+        showHotworkAdd:true,
+        dropdown:workData.dropdown
     })
 }
 //重建
-const editData = () => {
+const editData = (row) => {
     emit('editData',{
-        showHotworkAdd:true
+        showHotworkAdd:true,
+        dropdown:workData.dropdown,
+        hotWorkId:row.workId,
     })
 }
 //查看

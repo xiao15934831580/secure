@@ -14,7 +14,7 @@
     </div>
   </div>
     <div class="totalStyle" v-if="!hotwork.showList">
-        <Dialog v-if="hotwork.showHotworkAdd" :title="hotwork.hotworkContent.title" @callback = 'callback'></Dialog>
+        <Dialog v-if="hotwork.showHotworkAdd" :hotWorkId = 'hotwork.hotworkContent.hotWorkId' :dropdown ='hotwork.hotworkContent.dropdown'  :title="hotwork.hotworkContent.title" @callback = 'callback'></Dialog>
         <Detail v-if="hotwork.showHotworkLook" :hotWorkId = 'hotwork.hotworkContent.hotWorkId' @callback = 'callback'></Detail>
     </div>
 </template>
@@ -30,7 +30,8 @@ let hotwork =  reactive({
     activeName:'first',
     hotworkContent:{
       title:'',
-      hotWorkId:''
+      hotWorkId:'',
+      dropdown:''
     },
 })
 
@@ -39,18 +40,21 @@ const addData = (obj)=>{
   hotwork.showHotworkAdd = obj.showHotworkAdd;
   hotwork.showList = false;
   hotwork.hotworkContent.title = '新建';
+  hotwork.hotworkContent.dropdown = obj.dropdown
 }
-//重建
+//重建state
 const editData = (obj)=>{
   hotwork.showHotworkAdd = obj.showHotworkAdd;
   hotwork.showList = false;
   hotwork.hotworkContent.title = '重建';
+   hotwork.hotworkContent.dropdown = obj.dropdown;
+   hotwork.hotworkContent.hotWorkId = obj.hotWorkId;
 }
 // //查看
 const handleLook = (obj)=>{
     hotwork.showHotworkLook = obj.showHotworkLook;
     hotwork.showList = false;
-    hotwork.hotworkContent.hotWorkId = obj.hotWorkId
+    hotwork.hotworkContent.hotWorkId = obj.hotWorkId;
 }
 const allFalse = ()=>{
   hotwork.showList = false;

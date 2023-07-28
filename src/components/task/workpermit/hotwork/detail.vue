@@ -8,37 +8,53 @@
                     <span class="callback ml-16" @click="callback">返回</span>
                     <span class="split"></span>
                     <span>查看</span>
+                    
                     </p>
+                    <el-button type="">下载</el-button>
             </div>
             <div class="bottomBox bg_color">
                 <div class="test_paper">
                         <div class="basicstyle">
                             <div class="itemStyle">
-                                <p class="approveState">待审批,关联工作正在进行中</p>
-                                <p class="unapproveState">不通过,您可重建作业许可申请</p>
-                                <p class="approveStated">通过,此作业许可单可进入作业过程</p>
-                                <p class="backState">已撤销,您可重建作业许可申请</p>
-                                <p class="approveIng">审批中,您可电话联系对应审批人,快速完成审批</p>
+                                <p class="approveState" v-if="dialogData.formData.state === 0">待审批,关联工作正在进行中</p>
+                                <p class="unapproveState" v-if="dialogData.formData.state === 4">不通过,您可重建作业许可申请</p>
+                                <p class="approveStated" v-if="dialogData.formData.state === 3">通过,此作业许可单可进入作业过程</p>
+                                <p class="backState" v-if="dialogData.formData.state === 2">已撤销,您可重建作业许可申请</p>
+                                <p class="approveIng" v-if="dialogData.formData.state === 1">审批中,您可电话联系对应审批人,快速完成审批</p>
                             </div>
                             <div class="itemStyle mt-16">
                                 <p class="headerMsg">申请信息</p>
                                 <div class="formItem">
                                     <p class="titleName">申请信息</p>
-                                    <p class="formItemStyle"><span class="labelStyle">作业票编号：</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">作业申请单位:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火位置:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火部位:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火作业级别:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火方式:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火作业实施时间:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">作业内容:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">风险辨识结果:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">是否需要开锁:</span>{{dialogData.formData.courseId}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">作业票编号：</span>{{dialogData.formData.workNo}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">作业申请单位:</span>{{dialogData.formData.applyCompanyName}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">动火地点:</span>{{dialogData.formData.place}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">动火部位:</span>{{dialogData.formData.part}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">动火作业级别:</span>{{dialogData.formData.level}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">动火方式:</span>{{dialogData.formData.methodStr}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">动火作业实施时间:</span>{{dialogData.formData.beginAndEndTime}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">作业内容:</span>{{dialogData.formData.content}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">风险辨识结果:</span>{{dialogData.formData.riskResult}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">是否需要开锁:</span>{{dialogData.formData.workLock}}</p> 
                                     <p class="titleName">关联作业票</p>
-                                    <p class="formItemStyle"><span class="labelStyle">关联作业票:</span>{{dialogData.formData.courseId}}</p> 
+                                    <p class="formItemStyle"><span class="labelStyle">关联作业票:</span>{{dialogData.formData.relationWorkNos}}</p> 
                                     <p class="titleName">图片/附件</p>
-                                    <p class="formItemStyle"><span class="labelStyle">图片:</span>{{dialogData.formData.courseId}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">附件:</span>{{dialogData.formData.courseId}}</p> 
+                                    <p class="formItemStyle" style="display:flex;"><span class="labelStyle">图片:</span>
+                                        <span v-for="fit in dialogData.formData.images" :key="fit.id" class="block">
+                                            <el-image style="width: 100px; height: 100px;margin-right:16px;" :zoom-rate="1.2"  :src="fit.url" fit="cover" />
+                                        </span>
+                                        </p> 
+                                    <p class="formItemStyle" style="display:flex; margin-top:16px;"><span class="labelStyle">附件:</span>
+                                            <!-- <el-upload
+                                                v-model:file-list="dialogData.formData.attachments"
+                                                class="upload-demo"
+                                                :on-preview="handlePreview"
+                                                multiple
+                                            ></el-upload> -->
+                                            <ul>
+                                                <li style="margin-bottom:16px;cursor: pointer;" v-for="item in dialogData.formData.attachments" :key="item.url"> <span @click="checkUrl(item.url)">{{item.name}}</span> </li>
+                                            </ul>
+                                    </p> 
                                 </div>
                             </div>  
                             <div class="itemStyle mt-16">
@@ -46,9 +62,9 @@
                                     <el-tab-pane label="关联信息" name="first">
                                         <div class="formItem">
                                             <p class="titleName">关联作业人</p>
-                                            <p class="formItemStyle"><span class="labelStyle">申请单位监护人:</span>{{dialogData.formData.courseId}}</p>
-                                            <p class="formItemStyle"><span class="labelStyle">安全交底人:</span>{{dialogData.formData.courseId}}</p>
-                                            <p class="formItemStyle"><span class="labelStyle">作业单位:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">申请单位监护人:</span>{{dialogData.formData.guardianUsers}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">安全交底人:</span>{{dialogData.formData.safetyUsers}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">作业单位:</span>{{dialogData.formData.workCompanyName}}</p>
                                         </div>
                                         
                                     </el-tab-pane>
@@ -56,8 +72,9 @@
                                         <div class="formItem">
                                             <p class="titleName">指定内容</p>
                                             <p class="formItemStyle"><span class="labelStyle">指定动火人:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">作业单位负责人:</span>{{dialogData.formData.courseId}}</p>
                                             <p class="formItemStyle"><span class="labelStyle">作业单位监护人:</span>{{dialogData.formData.courseId}}</p>
-                                            <p class="formItemStyle"><span class="labelStyle">环境监测人:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">动火分析人:</span>{{dialogData.formData.courseId}}</p>
                                             <p class="formItemStyle"><span class="labelStyle">提交人:</span>{{dialogData.formData.courseId}}</p>
                                         </div>
                                     </el-tab-pane>
@@ -106,9 +123,10 @@
                                             <p class="formItemStyle"><span class="labelStyle">接受安全交底人:</span>{{dialogData.formData.courseId}}</p>
                                         </div>    
                                     </el-tab-pane>
-                                    <el-tab-pane label="环境监测" name="sixth">
+                                    <el-tab-pane label="动火分析" name="sixth">
                                          <div class="formItem">
                                              <p class="titleName">取样点</p>
+                                             <p class="formItemStyle"><span class="labelStyle">气体取样时间:</span>{{dialogData.formData.courseId}}</p>
                                              <p class="formItemStyle"><span class="labelStyle">取样位置:</span>{{dialogData.formData.courseId}}</p>
                                              <p class="formItemStyle"><span class="labelStyle">距离动火点:</span>{{dialogData.formData.courseId}}</p>
                                              <p class="formItemStyle"><span class="labelStyle">代表性气体1:</span>{{dialogData.formData.courseId}}</p>
@@ -124,34 +142,45 @@
                                      <p class="titleName">审批流程</p>
                                        <el-timeline class="formpadding">
                                             <el-timeline-item
-                                            v-for="(activity, index) in dialogData.formData.activities"
+                                            v-for="(activity, index) in dialogData.formData.approverUsers"
                                             :key="index"
                                             >
                                             <!-- {{ activity.content }} -->
-                                                <p class="timeline_title"> <span>{{activity.personType}}</span> <span>{{activity.timestamp}}</span></p> 
-                                                <p class="timeline_content">{{ activity.name }}</p> 
+                                                <p class="timeline_title"> <span>{{activity.dutyName}}</span> <span>{{activity.timestamp}}</span></p> 
+                                                <p class="timeline_content">{{ activity.realName }}</p> 
                                             </el-timeline-item>
                                         </el-timeline>
                                  </div>
                             </div>
                             <div class="itemStyle mt-16 footerStyle">
                                 <el-button
+                                    v-if="dialogData.formData.approverFlg"
                                     size="large"
                                     type="success"
                                     class="btn-mixins dia-suc"
-                                    @click="agree()"
+                                    @click="agree(1)"
                                     > &nbsp;&nbsp;同意 &nbsp;&nbsp;</el-button>
+ 
                                 <el-button
+                                    v-if="dialogData.formData.approverFlg"
+                                    size="large"
+                                    class="btn-mixins-clear-default"
+                                    @click="agree(2)"
+                                    >&nbsp;&nbsp; 拒绝 &nbsp;&nbsp;</el-button>
+                                <el-button
+                                    v-if="dialogData.formData.myselfFlg&&dialogData.formData.state === 1"
                                     size="large"
                                     type="primary"
                                     class="btn-mixins dia-suc"
-                                    @click="revoke()"
-                                    > &nbsp;&nbsp;撤销 &nbsp;&nbsp;</el-button>    
+                                    @click="revoke(3)"
+                                    > &nbsp;&nbsp;撤销 &nbsp;&nbsp;</el-button>   
                                 <el-button
+                                    v-if="dialogData.formData.myselfFlg&&dialogData.formData.state === 0"
                                     size="large"
-                                    class="btn-mixins-clear-default"
-                                    @click="close"
-                                    >&nbsp;&nbsp; 拒绝 &nbsp;&nbsp;</el-button>
+                                    type="danger"
+                                    class="btn-mixins dia-suc"
+                                    @click="deleteData(0)"
+                                    > &nbsp;&nbsp;删除 &nbsp;&nbsp;</el-button>   
                             </div>
                         </div>
                 </div>
@@ -193,11 +222,11 @@
                                     />
                             </el-form-item>
                             <p class="titleName">电子签名</p>
-                            <el-form-item label="电子签名" prop="opinion" required>
+                            <el-form-item label="电子签名" >
                                <div class='canvas-box' ref="canvasContent">
                                     <vue-esign id='canvas' ref="esign" :width='600' :height="300" style="border: 1px solid #c2c1c1;" 
                                     :isCrop="dialogData.approveData.approveformData.canvasData.isCrop" :lineWidth="dialogData.approveData.approveformData.canvasData.lineWidth" 
-                                    :lineColor="dialogData.approveData.approveformData.canvasData.lineColor"  v-model:bgColor="bgColor"/>
+                                    :lineColor="dialogData.approveData.approveformData.canvasData.lineColor"  v-model:bgColor="bgColor" />
 
                                 </div>
                                 <button class="mt-16" @click="clearHandle(esign)">重新签名</button>
@@ -216,7 +245,7 @@
                             <el-button
                             type="primary"
                                 class="btn-mixins dia-suc"
-                                @click="success(esign)"
+                                @click="success(addform,esign)"
                                 >确定</el-button>
                         </span>
                     </template>
@@ -227,17 +256,17 @@
 <script  setup>
 import { defineProps, ref,defineEmits } from "vue";
 import { reactive, watch,onBeforeMount } from "vue";
-import {getWorkPermitInfo as getWorkPermitInfo} from "@/api/train.js"
+import {getWorkPermitInfo as getWorkPermitInfo, operateApprove as operateApprove} from "@/api/train.js"
 import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { useRouter } from 'vue-router';
 import { Plus } from '@element-plus/icons-vue'
 const router = useRouter();
 const esign = ref('')
+const addform = ref('');
 const canvasContent = ref('')
 let props = defineProps({
   hotWorkId: {
-    type: Object,
-    default: () => {},
+    type: Number,
   },
 }); 
 const emit = defineEmits(['callback'])
@@ -245,6 +274,7 @@ const dialogData = reactive({
     approveData: {
         dialogFormVisible:false,
         formLabelWidth:'50%',
+        approveState:1,
         rules:{
             opinion:[{ required: true, message: "请输入意见", trigger: "blur" }],
         },
@@ -257,12 +287,11 @@ const dialogData = reactive({
                 lineColor: '#000000',
                 bgColor: '',
                 resultImg: '',
-                isCrop: false
+                isCrop: false,
+                image:''
             }
         }
     },
-    
-
     dropdown:{
         headline:[],
         courseName:[],
@@ -281,18 +310,7 @@ const dialogData = reactive({
               }]
     },
     rules:{
-        courseId:[{ required: true, message: "请选择考核课程名称", trigger: "change" }],
-        examineType:[{ required: true, message: "请选择考核方式", trigger: "change" }],
-        gradesSum:[{ required: true, message: "请输入试卷总分（分）", trigger: "blur" }],
-        passCriteria:[{ required: true, message: "请输入及格线（分）", trigger: "blur" }],
-        examineDuration:[{ required: true, message: "请输入考试时长（分钟）", trigger: "blur" }],
-        examineBeginTime:[{ required: true, message: "请选择考试开始时间", trigger: "change" }],
-        examineEndTime:[{ required: true, message: "请选择考试截止时间", trigger: "change" }],
-        aloneOptionNum:[{ required: true, message: "请输入单选题数量", trigger: "change" }],
-        moreOptionsNum:[{ required: true, message: "请输入多选题数量", trigger: "change" }],
-        judgeNum:[{ required: true, message: "请输入判断题数量", trigger: "change" }],
-        outstanding:[{ required: true, message: "请输入优秀的百分比", trigger: "change" }],
-        passRate:[{ required: true, message: "请输入及格的百分比", trigger: "change" }]
+        opinion:[{ required: true, message: "请输入意见", trigger: "bulr" }],
     },
     props:{
         hotWorkId:'',
@@ -415,70 +433,69 @@ function dataURLtoBlob(dataurl) {
 function blobToFile(theBlob, fileName) {
       const file = new File([theBlob], fileName)
       return file;
-    }
+}
 //画布生成图片
 
-const handleGenerate= (esign)=> {
-    // esign.generate().then(res => {
-    //   console.log(res)
-    // }).catch(err => {
-    //   alert(err) // 画布没有签字时会执行这里 'Not Signned'
-    // })
-    // try {
-    //         const base64Data = await esign.value.generate()
-    //         console.log('res', base64Data)
-    //         img.value = base64Data
-    //         const blob = dataURLtoBlob(base64Data);
-    
-    //         const file = blobToFile(blob, "业主签字.png");
-    
-    //         const formData = new FormData();
-    //         formData.append("file", file);
-    // }
-    // catch (e) {
-    //     Snackbar({
-    //       content: "请先签字",
-    //       position: 'top',
-    //       duration:1000
-    //     })
-    //     img.value = ''
-    // }
+const handleGenerate= (esign)  => {
+    return   new Promise((resolve, reject) => {
+            esign.generate().then(res => {
+                resolve(res)
+                // dialogData.approveData.approveformData.canvasData.image = res;
+                // console.log(dialogData.approveData.approveformData.canvasData.image)
+            }).catch(err => {
+                reject('请签字') // 画布没有签字时会执行这里 'Not Signned'
+                 ElNotification({
+                    title: 'Warning',
+                    message: res.message?res.message:'请签字',
+                    type: 'warning',
+                })
+            })
+    })
   }
 //同意确认
-const success = (esign)=>{
-    handleGenerate(esign)
-}  
-const getQusetion=(id)=>{
-    let user = JSON.parse(localStorage.getItem('userData'))
-    getExtract(id,user.username).then((res)=>{
-        if(res.code ===200){
-            dialogData.question = res.body.questionList;
-            dialogData.score = res.body.grade;
-            dialogData.examineState = res.body.examineState ===3?'不及格':res.body.examineState ===4?"及格":res.body.examineState === 5?'优秀':'';
-            dialogData.answers = res.body.respondenceMap;
-            Object.keys(dialogData.answers).forEach(key=>{
-                if(dialogData.answers[key].length ===1){
-                    dialogData.answers[key] = dialogData.answers[key].toString();
+const success = (addform,esign)=>{
+    console.log(addform)
+    if (!addform) return;
+    addform.validate( (valid) => {
+    if (valid) {
+        handleGenerate(esign).then((res)=>{
+            let obj = {
+                approveFlg: dialogData.approveData.approveState,
+                opinion: dialogData.approveData.approveformData.opinion,
+                sign: res,
+                workNo: dialogData.formData.workNo
+            }
+            console.log(obj)
+            let user = JSON.parse(localStorage.getItem('userData'))
+            operateApprove(obj,user.username).then((res)=>{
+                if(res.code ===200){
+                    callback()
+                }else {
+                    ElNotification({
+                        title: 'Warning',
+                        message: res.message?res.message:'服务器异常',
+                        type: 'warning',
+                    })
+                    if(res.message.indexOf('token已过期')>-1  ){
+                            store.dispatch('app/logout')
+                        }
                 }
             })
-            console.log(dialogData.answers)
-        }else{
-              ElNotification({
-                title: 'Warning',
-                message: res.message?res.message:'服务器异常',
-                type: 'warning',
-              })
-               if(res.message.indexOf('token已过期')>-1  ){
-                    store.dispatch('app/logout')
-                }
-        }
-    })
-}
+        })
+
+    }else {
+        return false;
+    }
+  })
+}  
+
 onBeforeMount(()=>{
     let user = JSON.parse(localStorage.getItem('userData'))
     getWorkPermitInfo(dialogData.props.hotWorkId,user.username).then((res)=>{
         if(res.code ===200){
             console.log(res)
+            dialogData.formData = res.body;
+            console.log(dialogData.formData)
         }else{
             ElNotification({
                 title: 'Warning',
@@ -504,22 +521,17 @@ watch(
 const handleClick = (tab, event) => {
   console.log(tab, event)
 }
-const  scrollToQuestion=(index)=> {
-        const questionEl = document.getElementById(`question-${index}`)
-        if (questionEl) {
-          questionEl.scrollIntoView({ behavior: 'smooth' })
-        }
-      }
-
+//文件预览
+const checkUrl = (url) => {
+        window.open(url)
+}
 //返回上一级
 const callback = () => {
     emit('callback') 
-    console.log("111callback")
 }
-//撤销
-const revoke = () => {
+const deleteData = (state) => {
     ElMessageBox.confirm(
-    '确认要撤销此数据吗?',
+    '确认要删除此数据吗?',
     'Warning',
     {
       confirmButtonText: '确认',
@@ -529,6 +541,7 @@ const revoke = () => {
   )
     .then(() => {
         //确认删除的逻辑
+        dialogData.approveData.approveState = state
       ElMessage({
         type: 'success',
         message: '撤销成功',
@@ -541,8 +554,56 @@ const revoke = () => {
       })
     })
 }
+//撤销
+const revoke = (state) => {
+    ElMessageBox.confirm(
+    '确认要撤销此数据吗?',
+    'Warning',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+        //确认删除的逻辑
+        dialogData.approveData.approveState = state
+        let obj = {
+                approveFlg: dialogData.approveData.approveState,
+                workNo: dialogData.formData.workNo
+            }
+            console.log(obj)
+            let user = JSON.parse(localStorage.getItem('userData'))
+            operateApprove(obj,user.username).then((res)=>{
+                if(res.code ===200){
+                    ElMessage({
+                        type: 'success',
+                        message: '撤销成功',
+                        })
+                    callback()
+                }else {
+                    ElNotification({
+                        title: 'Warning',
+                        message: res.message?res.message:'服务器异常',
+                        type: 'warning',
+                    })
+                    if(res.message.indexOf('token已过期')>-1  ){
+                            store.dispatch('app/logout')
+                        }
+                }
+            })
+
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消撤销',
+      })
+    })
+}
 //同意
-const agree = () => {
+const agree = (state) => {
+    dialogData.approveData.approveState = state
     dialogData.approveData.dialogFormVisible = true
 }
 //弹窗关闭
@@ -622,6 +683,8 @@ const approveclose = () => {
          }
         .formItemStyle{
                 color: #1C222C;
+                font-weight: 100;
+                font-size: 14px;
                 .labelStyle{
                     display: inline-block;
                     color: #797F89;
