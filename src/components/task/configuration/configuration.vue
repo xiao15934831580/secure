@@ -3,7 +3,7 @@
     <div class="tablestyle">
         <el-tabs v-model="hotwork.activeName" class="demo-tabs" @tab-click="handleClick">
             <el-tab-pane label="动火作业" name="first">
-                <Hotwork @addData = 'addData' @handleLook = 'handleLook' @editData = 'editData'> </Hotwork>
+                <Hotwork @editData = 'editData'> </Hotwork>
             </el-tab-pane>
             <el-tab-pane label="受限空间" name="second">
                 <!-- <rank/> -->
@@ -14,19 +14,18 @@
     </div>
   </div>
     <div class="totalStyle" v-if="!hotwork.showList">
-        <Dialog v-if="hotwork.showHotworkAdd" :hotWorkId = 'hotwork.hotworkContent.hotWorkId' :dropdown ='hotwork.hotworkContent.dropdown'  :title="hotwork.hotworkContent.title" @callback = 'callback'></Dialog>
-        <Detail v-if="hotwork.showHotworkLook" :hotWorkId = 'hotwork.hotworkContent.hotWorkId' @callback = 'callback'></Detail>
+        <Dialog v-if="hotwork.showHotworkEdit"     @callback = 'callback'></Dialog>
+        <!-- <Detail v-if="hotwork.showHotworkLook" :hotWorkId = 'hotwork.hotworkContent.hotWorkId' @callback = 'callback'></Detail> -->
     </div>
 </template>
 <script setup>
 import Hotwork from "./hotwork/hotwork.vue";
-import Detail from "./hotwork/detail.vue";
+// import Detail from "./hotwork/detail.vue";
 import Dialog from "./hotwork/dialog.vue";
 import { reactive, ref,markRaw } from "vue";
 let hotwork =  reactive({
     showList:true,
-    showHotworkLook:false,
-    showHotworkAdd:false,
+    showHotworkEdit:false,
     activeName:'first',
     hotworkContent:{
       title:'',
@@ -35,26 +34,14 @@ let hotwork =  reactive({
     },
 })
 
-//新建
-const addData = (obj)=>{
-  hotwork.showHotworkAdd = obj.showHotworkAdd;
-  hotwork.showList = false;
-  hotwork.hotworkContent.title = '新建';
-  hotwork.hotworkContent.dropdown = obj.dropdown
-}
+
 //重建state
 const editData = (obj)=>{
-  hotwork.showHotworkAdd = obj.showHotworkAdd;
+  hotwork.showHotworkEdit = obj.showHotworkEdit;
   hotwork.showList = false;
-  hotwork.hotworkContent.title = '重建';
-   hotwork.hotworkContent.dropdown = obj.dropdown;
-   hotwork.hotworkContent.hotWorkId = obj.hotWorkId;
-}
-// //查看
-const handleLook = (obj)=>{
-    hotwork.showHotworkLook = obj.showHotworkLook;
-    hotwork.showList = false;
-    hotwork.hotworkContent.hotWorkId = obj.hotWorkId;
+  // hotwork.hotworkContent.title = '重建';
+  //  hotwork.hotworkContent.dropdown = obj.dropdown;
+  //  hotwork.hotworkContent.hotWorkId = obj.hotWorkId;
 }
 const allFalse = ()=>{
   hotwork.showList = false;
@@ -64,7 +51,7 @@ const allFalse = ()=>{
 const callback = () => {
   console.log("111callback")
   allFalse()
-    hotwork.showList = true;
+  hotwork.showList = true;
 }
 </script>
 <style  lang = 'less' scoped>

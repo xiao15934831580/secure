@@ -258,10 +258,10 @@ const routes = [
       },
       {
         path: '/incomplete',
-        name: '未完成作业票',
+        name: '作业过程',
         component: () => import('../components/task/incomplete/incomplete.vue'),
         meta: {
-          title: '未完成作业票',
+          title: '作业过程',
         },
       },
       {
@@ -286,6 +286,14 @@ const routes = [
         component: () => import('../components/task/report/report.vue'),
         meta: {
           title: '作业票统计报表',
+        },
+      },
+      {
+        path: '/configuration',
+        name: '配置信息',
+        component: () => import('../components/task/configuration/configuration.vue'),
+        meta: {
+          title: '配置信息',
         },
       },
       {

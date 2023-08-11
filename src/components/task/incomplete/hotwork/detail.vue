@@ -10,246 +10,145 @@
                     <span>查看</span>
                     
                     </p>
-                    <el-button type="">下载</el-button>
+                    <!-- <el-button type="">下载</el-button> -->
             </div>
             <div class="bottomBox bg_color">
                 <div class="test_paper">
                         <div class="basicstyle">
                             <div class="itemStyle">
-                                <p class="approveState" v-if="dialogData.formData.state === 0">待审批,关联工作正在进行中</p>
-                                <p class="unapproveState" v-if="dialogData.formData.state === 4">不通过,您可重建作业许可申请</p>
-                                <p class="approveStated" v-if="dialogData.formData.state === 3">通过,此作业许可单可进入作业过程</p>
-                                <p class="backState" v-if="dialogData.formData.state === 2">已撤销,您可重建作业许可申请</p>
-                                <p class="approveIng" v-if="dialogData.formData.state === 1">审批中,您可电话联系对应审批人,快速完成审批</p>
-                            </div>
-                            <div class="itemStyle mt-16">
-                                <p class="headerMsg">申请信息</p>
-                                <div class="formItem">
-                                    <p class="titleName">申请信息</p>
-                                    <p class="formItemStyle"><span class="labelStyle">作业票编号：</span>{{dialogData.formData.workNo}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">作业申请单位:</span>{{dialogData.formData.applyCompanyName}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火地点:</span>{{dialogData.formData.place}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火部位:</span>{{dialogData.formData.part}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火作业级别:</span>{{dialogData.formData.level}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火方式:</span>{{dialogData.formData.methodStr}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">动火作业实施时间:</span>{{dialogData.formData.beginAndEndTime}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">作业内容:</span>{{dialogData.formData.content}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">风险辨识结果:</span>{{dialogData.formData.riskResult}}</p> 
-                                    <p class="formItemStyle"><span class="labelStyle">是否需要开锁:</span>{{dialogData.formData.workLock}}</p> 
-                                    <p class="titleName">关联作业票</p>
-                                    <p class="formItemStyle"><span class="labelStyle">关联作业票:</span>{{dialogData.formData.relationWorkNos}}</p> 
-                                    <p class="titleName">图片/附件</p>
-                                    <p class="formItemStyle" style="display:flex;"><span class="labelStyle">动火部位照片:</span>
-                                        <span v-for="fit in dialogData.formData.images" :key="fit.id" class="block">
-                                            <el-image style="width: 100px; height: 100px;margin-right:16px;" :zoom-rate="1.2"  :src="fit.url" fit="cover" />
-                                        </span>
-                                        </p> 
-                                    <p class="formItemStyle" style="display:flex; margin-top:16px;"><span class="labelStyle">相关附件:</span>
-                                            <!-- <el-upload
-                                                v-model:file-list="dialogData.formData.attachments"
-                                                class="upload-demo"
-                                                :on-preview="handlePreview"
-                                                multiple
-                                            ></el-upload> -->
-                                            <ul>
-                                                <li style="margin-bottom:16px;cursor: pointer;" v-for="item in dialogData.formData.attachments" :key="item.url"> <span @click="checkUrl(item.url)">{{item.name}}</span> </li>
-                                            </ul>
-                                    </p> 
-                                </div>
-                            </div>  
+                                <p class="backState" v-if="dialogData.formData.state === 1">已关闭,该作业票已结束</p>
+                                <p class="approveIng" v-if="dialogData.formData.state === 0">作业中</p>
+                            </div> 
                             <div class="itemStyle mt-16">
                                  <el-tabs v-model="dialogData.formData.activeName" class="demo-tabs" @tab-click="handleClick">
-                                    <el-tab-pane label="关联信息" name="first">
+                                    <el-tab-pane label="作业前清单确认" name="first">
                                         <div class="formItem">
-                                            <p class="titleName">关联作业人</p>
-                                            <p class="formItemStyle"><span class="labelStyle">申请单位监护人:</span>{{dialogData.formData.guardianUsers}}</p>
-                                            <p class="formItemStyle"><span class="labelStyle">安全交底人:</span>{{dialogData.formData.safetyUsers}}</p>
-                                            <p class="formItemStyle"><span class="labelStyle">作业单位:</span>{{dialogData.formData.workCompanyName}}</p>
+                                            <p class="titleName">作业前清单确认</p>
+                                            <div class="formItemStyle displayFlex" v-for="(item,index) in dialogData.formData.options" :key="index">
+                                                    <span class="labelStyle mt-5">内容{{index+ 1}}:</span>
+                                                    <span class="contentStyle">
+                                                        <p>
+                                                            <el-checkbox   v-model="item.value">{{
+                                                                item.key}}
+                                                            </el-checkbox>                       
+                                                        </p>
+                                                    </span>
+                                            </div>
+                                            <el-timeline class="formpadding">
+                                                <el-timeline-item
+                                                v-for="(activity, index) in dialogData.formData.approverUsers"
+                                                :key="index"
+                                                >
+                                                <!-- {{ activity.content }} -->
+                                                    <p class="timeline_title"> <span>{{activity.dutyName}}</span> <span>{{activity.timestamp}}</span></p> 
+                                                    <p class="timeline_content">{{ activity.realName }}</p> 
+                                                </el-timeline-item>
+                                            </el-timeline>
                                         </div>
+
                                         
                                     </el-tab-pane>
-                                    <el-tab-pane label="相关人员指定" name="second">
+                                    <el-tab-pane label="作业中环境分析" name="second">
                                         <div class="formItem">
-                                            <p class="titleName">指定内容</p>
-                                            <p class="formItemStyle"><span class="labelStyle">指定动火人:</span>{{dialogData.formData.courseId}}</p>
-                                            <p class="formItemStyle"><span class="labelStyle">作业单位负责人:</span>{{dialogData.formData.courseId}}</p>
-                                            <p class="formItemStyle"><span class="labelStyle">作业单位监护人:</span>{{dialogData.formData.courseId}}</p>
-                                            <p class="formItemStyle"><span class="labelStyle">动火分析人:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="titleName">取样点1</p>
+                                            <p class="formItemStyle"><span class="labelStyle">取样位置:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">距离动火点:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">气体取样时间:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">代表性气体1:</span>{{dialogData.formData.courseId}}</p>
                                             <p class="formItemStyle"><span class="labelStyle">提交人:</span>{{dialogData.formData.courseId}}</p>
                                         </div>
                                     </el-tab-pane>
-                                    <!-- <el-tab-pane label="工属具申请" name="third">
+                                    <el-tab-pane label="作业中人员状态" name="third">
                                         <div class="formItem">
-                                            <p class="titleName">工属具1</p>
-                                            <p class="formItemStyle"><span class="labelStyle">工属具:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="titleName">作业人状态及操作规范</p>
+                                            <p class="formItemStyle"><span class="labelStyle">现场照片:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">现场描述:</span>{{dialogData.formData.courseId}}</p>
                                             <p class="formItemStyle"><span class="labelStyle">提交人:</span>{{dialogData.formData.courseId}}</p>
-                                           
+                                            <p class="titleName">监控视频1</p>
+                                            <p class="formItemStyle"><span class="labelStyle">回放时间:</span>{{dialogData.formData.courseId}}</p>
                                         </div>
-                                    </el-tab-pane> -->
-                                    <el-tab-pane label="安全指南确认" name="fourth">
+                                    </el-tab-pane>
+                                    <el-tab-pane label="作业中预警" name="fourth">
                                         <div class="formItem">
                                             <div>
-                                                <p class="titleName">安全措施1</p>
-                                                <div class="formItemStyle displayFlex">
-                                                    <span class="labelStyle mt-5">内容:</span>
-                                                    <span class="contentStyle">
-                                                        <p v-for="(item,index) in dialogData.formData.options" :key="index">
-                                                            <el-checkbox   v-model="item.value">{{
-                                                                item.key}}
-                                                            </el-checkbox>                       
-                                                        </p>
-                                                    </span>
+                                                <p class="titleName">作业票超时预警</p>
+                                                <div class="formItemStyle boxSize">
+                                                    <div class="titlemsg between">
+                                                        <span class="titleColor">作业票超时</span><span class="commonColor">预警时间：2021-12-12</span>
+                                                    </div>
+                                                    <div class="contentmsg mt-16">
+                                                        <p class="contentStyle"><span class="bgcolor mr-16">判断依据</span>特级作业票有效时间：8小时,应在2022-12-12 12:00:00前关闭作业票</p>
+                                                        <p class="contentStyle mt-16"><span  class="bgcolor">作业建议</span>特级作业票有效时间：8小时,应在2022-12-12 12:00:00前关闭作业票</p>
+                                                    </div>
                                                 </div>
-                                                <p class="formItemStyle mt-16"><span class="labelStyle">图片:</span>{{dialogData.formData.courseId}}</p>
-                                                <p class="formItemStyle"><span class="labelStyle">确认人:</span>{{dialogData.formData.courseId}}</p>
+                                                <p class="titleName mt-16">动火分析超时预警</p>
+                                                <div class="formItemStyle boxSize">
+                                                    <div class="titlemsg between">
+                                                        <span class="titleColor">动火前分析超时</span><span class="commonColor">2021-12-12</span>
+                                                    </div>
+                                                    <div class="contentmsg mt-16">
+                                                        <p class="contentStyle"><span class="bgcolor mr-16">判断依据</span>特级作业票有效时间：8小时,应在2022-12-12 12:00:00前关闭作业票</p>
+                                                        <p class="contentStyle mt-16"><span  class="bgcolor">作业建议</span>特级作业票有效时间：8小时,应在2022-12-12 12:00:00前关闭作业票</p>
+                                                    </div>
+                                                </div>
+                                               <p class="titleName mt-16">动火分析不合格预警</p>
+                                                <div class="formItemStyle boxSize">
+                                                    <div class="titlemsg between">
+                                                        <span class="titleColor">动火分析不合格</span><span class="commonColor">2021-12-12</span>
+                                                    </div>
+                                                    <div class="contentmsg mt-16">
+                                                        <p class="contentStyle"><span class="bgcolor mr-16">判断依据</span>特级作业票有效时间：8小时,应在2022-12-12 12:00:00前关闭作业票</p>
+                                                        <p class="contentStyle mt-16"><span  class="bgcolor">作业建议</span>特级作业票有效时间：8小时,应在2022-12-12 12:00:00前关闭作业票</p>
+                                                    </div>
+                                                </div>
+                                               <p class="titleName mt-16">作业中断预警</p>
+                                                <div class="formItemStyle boxSize">
+                                                    <div class="titlemsg between">
+                                                        <span class="titleColor">作业内容变更</span><span class="commonColor">2021-12-12</span>
+                                                    </div>
+                                                    <div class="contentmsg mt-16">
+                                                        <p class="contentStyle"><span class="bgcolor mr-16">判断依据</span>特级作业票有效时间：8小时,应在2022-12-12 12:00:00前关闭作业票</p>
+                                                        <p class="contentStyle mt-16"><span  class="bgcolor">作业建议</span>特级作业票有效时间：8小时,应在2022-12-12 12:00:00前关闭作业票</p>
+                                                    </div>
+                                                </div>                                                                                             
                                             </div>
                                         </div>
                                     </el-tab-pane>
-                                    <el-tab-pane label="安全信息交底" name="fivth">
+                                    <el-tab-pane label="作业中工属具" name="fivth">
                                         <div class="formItem">
-                                            <p class="titleName">安全交底内容</p>
-                                            <div class="formItemStyle displayFlex">
-                                                    <span class="labelStyle mt-5">内容:</span>
+                                            <p class="titleName">作业前</p>
+                                            <p class="formItemStyle"><span class="labelStyle">照片:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">描述:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">提交人:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="titleName">作业后</p>
+                                            <p class="formItemStyle"><span class="labelStyle">照片:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">描述:</span>{{dialogData.formData.courseId}}</p>
+                                            <p class="formItemStyle"><span class="labelStyle">提交人:</span>{{dialogData.formData.courseId}}</p>
+                                        </div>    
+                                    </el-tab-pane>
+                                    <el-tab-pane label="作业后验收" name="sixth">
+                                         <div class="formItem">
+                                             <p class="titleName">作业后验收</p>
+                                             <div class="formItemStyle displayFlex" v-for="(item,index) in dialogData.formData.options" :key="index">
+                                                    <span class="labelStyle mt-5">内容{{index+ 1}}:</span>
                                                     <span class="contentStyle">
-                                                        <p v-for="(item,index) in dialogData.formData.options" :key="index">
+                                                        <p>
                                                             <el-checkbox   v-model="item.value">{{
                                                                 item.key}}
                                                             </el-checkbox>                       
                                                         </p>
                                                     </span>
                                             </div>
-                                            <p class="formItemStyle"><span class="labelStyle">安全交底人:</span>{{dialogData.formData.courseId}}</p>
-                                            <p class="titleName">接受交底人</p>
-                                            <p class="formItemStyle"><span class="labelStyle">接受交底人:</span>{{dialogData.formData.courseId}}</p>
-                                        </div>    
-                                    </el-tab-pane>
-                                    <el-tab-pane label="动火分析" name="sixth">
-                                         <div class="formItem">
-                                             <p class="titleName">取样点</p>
-                                             <p class="formItemStyle"><span class="labelStyle">气体取样时间:</span>{{dialogData.formData.courseId}}</p>
-                                             <p class="formItemStyle"><span class="labelStyle">取样位置:</span>{{dialogData.formData.courseId}}</p>
-                                             <p class="formItemStyle"><span class="labelStyle">距离动火点:</span>{{dialogData.formData.courseId}}</p>
-                                             <p class="formItemStyle"><span class="labelStyle">代表性气体1:</span>{{dialogData.formData.courseId}}</p>
-                                             <p class="formItemStyle"><span class="labelStyle">代表性气体1:</span>{{dialogData.formData.courseId}}</p>
+                                             <p class="formItemStyle"><span class="labelStyle">验收照片:</span>{{dialogData.formData.courseId}}</p>
+                                             <p class="formItemStyle"><span class="labelStyle">验收记录:</span>{{dialogData.formData.courseId}}</p>
                                              <p class="formItemStyle"><span class="labelStyle">提交人:</span>{{dialogData.formData.courseId}}</p>
                                         </div>
                                     </el-tab-pane>
                                 </el-tabs>
                             </div>  
-                            <div class="itemStyle mt-16">
-                                <p class="headerMsg">审批信息</p>
-                                 <div class="formItem">
-                                     <p class="titleName">审批流程</p>
-                                       <el-timeline class="formpadding">
-                                            <el-timeline-item
-                                            v-for="(activity, index) in dialogData.formData.approverUsers"
-                                            :key="index"
-                                            >
-                                            <!-- {{ activity.content }} -->
-                                                <p class="timeline_title"> <span>{{activity.dutyName}}</span> <span>{{activity.timestamp}}</span></p> 
-                                                <p class="timeline_content">{{ activity.realName }}</p> 
-                                            </el-timeline-item>
-                                        </el-timeline>
-                                 </div>
-                            </div>
-                            <div class="itemStyle mt-16 footerStyle">
-                                <el-button
-                                    v-if="dialogData.formData.approverFlg"
-                                    size="large"
-                                    type="success"
-                                    class="btn-mixins dia-suc"
-                                    @click="agree(1)"
-                                    > &nbsp;&nbsp;同意 &nbsp;&nbsp;</el-button>
- 
-                                <el-button
-                                    v-if="dialogData.formData.approverFlg"
-                                    size="large"
-                                    class="btn-mixins-clear-default"
-                                    @click="agree(2)"
-                                    >&nbsp;&nbsp; 拒绝 &nbsp;&nbsp;</el-button>
-                                <el-button
-                                    v-if="dialogData.formData.myselfFlg&&dialogData.formData.state === 1"
-                                    size="large"
-                                    type="primary"
-                                    class="btn-mixins dia-suc"
-                                    @click="revoke(3)"
-                                    > &nbsp;&nbsp;撤销 &nbsp;&nbsp;</el-button>   
-                                <el-button
-                                    v-if="dialogData.formData.myselfFlg&&dialogData.formData.state === 0"
-                                    size="large"
-                                    type="danger"
-                                    class="btn-mixins dia-suc"
-                                    @click="deleteData(0)"
-                                    > &nbsp;&nbsp;删除 &nbsp;&nbsp;</el-button>   
-                            </div>
                         </div>
                 </div>
             </div>
-        </div>
-        <!-- 同意/拒绝 -->
-        <div class="lz-dialog">
-            <el-dialog
-                ref="ruleFormRef"
-                v-show="dialogData.approveData.dialogFormVisible"
-                :model-value="dialogData.approveData.dialogFormVisible"
-                title="审批"
-                :before-close="approveclose"
-                :width="dialogData.approveData.formLabelWidth"
-                :close-on-click-modal="false"
-                draggable
-                >
-                <el-form
-                    :model="dialogData.approveData.approveformData"
-                    :inline="true"
-                    label-width="160px"
-                    :rules="dialogData.approveData.rules"
-                    ref="addform"
-                    require-asterisk-position="left"
-                    size="default"
-                    scroll-to-error="true"
-                >
-                    <div class="basicstyle">
-                        <div class="itemStyle padding-60">
-                            <p class="titleName">审批意见</p>
-                            <el-form-item label="意见" prop="opinion" required>
-                                <el-input
-                                    type="textarea"
-                                    show-word-limit
-                                    maxlength="100"
-                                    :autosize="{ minRows: 2, maxRows: 4 }"
-                                    placeholder="请输入考试时长"
-                                    v-model="dialogData.approveData.approveformData.opinion"
-                                    />
-                            </el-form-item>
-                            <p class="titleName">电子签名</p>
-                            <el-form-item label="电子签名" >
-                               <div class='canvas-box' ref="canvasContent">
-                                    <vue-esign id='canvas' ref="esign" :width='600' :height="300" style="border: 1px solid #c2c1c1;" 
-                                    :isCrop="dialogData.approveData.approveformData.canvasData.isCrop" :lineWidth="dialogData.approveData.approveformData.canvasData.lineWidth" 
-                                    :lineColor="dialogData.approveData.approveformData.canvasData.lineColor"  v-model:bgColor="bgColor" />
-
-                                </div>
-                                <button class="mt-16" @click="clearHandle(esign)">重新签名</button>
-                            </el-form-item>
-                        </div>
-                    </div>
-
-                </el-form>
-                <template #footer>
-                        <span class="dialog-footer">
-                            <el-button
-                                class="btn-mixins-clear-default"
-                                @click="approveclose"
-                                >取消</el-button
-                            >
-                            <el-button
-                            type="primary"
-                                class="btn-mixins dia-suc"
-                                @click="success(addform,esign)"
-                                >确定</el-button>
-                        </span>
-                    </template>
-            </el-dialog>
         </div>
     </div>
 </template>
@@ -392,6 +291,13 @@ const dialogData = reactive({
           key: '选择作业票2',
           value:false
         }],
+        approverUsers:[
+            {
+                dutyName: "提交人",
+                orderNum: 0,
+                realName: "雨果"
+            }
+        ],
         fileList:[{
     name: 'food.jpeg',
     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
@@ -490,23 +396,23 @@ const success = (addform,esign)=>{
 }  
 
 onBeforeMount(()=>{
-    let user = JSON.parse(localStorage.getItem('userData'))
-    getWorkPermitInfo(dialogData.props.hotWorkId,user.username).then((res)=>{
-        if(res.code ===200){
-            console.log(res)
-            dialogData.formData = res.body;
-            console.log(dialogData.formData)
-        }else{
-            ElNotification({
-                title: 'Warning',
-                message: res.message?res.message:'服务器异常',
-                type: 'warning',
-              })
-               if(res.message.indexOf('token已过期')>-1  ){
-                    store.dispatch('app/logout')
-                }
-        }
-    })
+    // let user = JSON.parse(localStorage.getItem('userData'))
+    // getWorkPermitInfo(dialogData.props.hotWorkId,user.username).then((res)=>{
+    //     if(res.code ===200){
+    //         console.log(res)
+    //         dialogData.formData = res.body;
+    //         console.log(dialogData.formData)
+    //     }else{
+    //         ElNotification({
+    //             title: 'Warning',
+    //             message: res.message?res.message:'服务器异常',
+    //             type: 'warning',
+    //           })
+    //            if(res.message.indexOf('token已过期')>-1  ){
+    //                 store.dispatch('app/logout')
+    //             }
+    //     }
+    // })
 
 })
 watch(
@@ -787,6 +693,22 @@ const approveclose = () => {
         color: rgba(46, 131, 252, 1);
         line-height: 44px;
         padding: 0 16px;
+}
+.boxSize{
+    height: 140px;
+    width: 100%;
+    background-color: #F2F5FA;
+    padding: 16px;
+    .titleColor{
+        color: #F46B5A;
+        font-weight: 600;
+    }
+    .bgcolor{
+        background-color: #E4E9F1;
+        border-radius: 4px;
+        line-height: 28px;
+        padding: 4px 8px;
+    }
 }
 }
 

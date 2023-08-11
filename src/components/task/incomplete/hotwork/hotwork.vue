@@ -31,16 +31,24 @@
                               :value="item.id"
                               />
                           </el-select>
-                          <el-select class="w-10 m-2 mr-16" v-model="workData.searchValue.state" clearable  placeholder="请选择状态">
+                          <!-- <el-select class="w-10 m-2 mr-16" v-model="workData.searchValue.placeId" clearable  placeholder="请选择动火位置">
                               <el-option
-                              v-for="item in workData.dropdown.state"
+                              v-for="item in workData.dropdown.placeId"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                              />
+                          </el-select> -->
+                          <el-select class="w-10 m-2 mr-16" v-model="workData.searchValue.workState" clearable  placeholder="请选择状态">
+                              <el-option
+                              v-for="item in workData.dropdown.workState"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
                               />
                           </el-select>
                           <el-button type="primary" plain class="searchbutton " @click="queryTableData">查询</el-button>
-                          <el-button type="primary" plain class="searchbutton " @click="addData">新建</el-button>
+                          <!-- <el-button type="primary" plain class="searchbutton " @click="addData">新建</el-button> -->
                         </el-col>
                     </div>
                     <div class="score_chartstyle">
@@ -61,61 +69,38 @@
                         <el-table-column prop="sourceStr" label="来源" min-width="10%" />
                         <el-table-column prop="levelStr" label="作业级别" min-width="10%" />
                         <el-table-column prop="applyCompanyName" label="作业申请单位" min-width="10%" />
-                        <el-table-column prop="place" label="动火地点" min-width="10%" />
+                        <el-table-column prop="place" label="动火位置" min-width="10%" />
                         <el-table-column prop="methodStr" label="动火方式" min-width="10%" />
                         <el-table-column prop="beginAndEndTime" label="动火作业实施时间" min-width="13%" />
                         <el-table-column prop="workCompanyName" label="作业单位" min-width="10%" />
                         <el-table-column prop="createUser" label="提交人" min-width="7%" />
                         <el-table-column prop="createTime" label="提交时间" min-width="10%" />
-                        <el-table-column prop="state" label="状态" min-width="10%" >
+                        <el-table-column prop="workStateStr" label="状态" min-width="10%" >
                             <template #default="scope">
-                                <span v-if="scope.row.state === 0">
+                                <span v-if="scope.row.workState === 1">
                                         <el-tag 
                                         class="mr-16"
                                         :type="'info'"
                                         effect="light"
                                         disable-transitions
-                                        >{{scope.row.stateStr}}</el-tag>
+                                        >{{scope.row.workStateStr}}</el-tag>
                                 </span>
-                                <span v-if="scope.row.state === 1">
+                                <span v-if="scope.row.workState === 0">
                                         <el-tag 
                                         class="mr-16"
                                         :type="'primary'"
                                         effect="light"
                                         disable-transitions
-                                        >{{scope.row.stateStr}}</el-tag>
+                                        >{{scope.row.workStateStr}}</el-tag>
                                 </span>
-                                <span v-if="scope.row.state === 2">
-                                        <el-tag 
-                                        class="mr-16"
-                                        :type="'warning'"
-                                        effect="light"
-                                        disable-transitions
-                                        >{{scope.row.stateStr}}</el-tag>
-                                </span>
-                                <span v-if="scope.row.state === 3">
-                                        <el-tag 
-                                        class="mr-16"
-                                        :type="'success'"
-                                        effect="light"
-                                        disable-transitions
-                                        >{{scope.row.stateStr}}</el-tag>
-                                </span>
-                                <span v-if="scope.row.state === 4">
-                                        <el-tag 
-                                        class="mr-16"
-                                        :type="'danger'"
-                                        effect="light"
-                                        disable-transitions
-                                        >{{scope.row.stateStr}}</el-tag>
-                                </span>                                 
+                                                              
                             </template>
                         </el-table-column>
                         <el-table-column label="操作列" width="150" min-width="28%">
                             <template #default="scope">
                                 <el-button size="small" @click="handleLook(scope.row)"
                                 >查看</el-button>
-                                <el-button v-if="scope.row.rebuildFlg" size="small" @click="editData(scope.row)"
+                                <el-button v-if="scope.row.sourceStr === '新建'&& scope.row.workState === 1" size="small" @click="editData(scope.row)"
                                 >重建</el-button>
                             </template>
                         </el-table-column>
@@ -148,7 +133,7 @@ import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { Delete } from "@element-plus/icons-vue";
 import store from '@/store'
 import { getymd } from "@/utils/auth";
-import { getWorkPermitList as getWorkPermitList,getCompanyList as getCompanyList} from '@/api/train.js'
+import { getWorkCourseList as getWorkCourseList,getCompanyList as getCompanyList} from '@/api/train.js'
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const emit = defineEmits(['handleLook','addData','editData'])
@@ -161,7 +146,7 @@ let workData =  reactive({
       level:'',
       applyCompanyId:'',
       placeId:'',
-      state:'',
+      workState:'',
       workNo:''
     },
     dropdown:{
@@ -175,21 +160,12 @@ let workData =  reactive({
                       label: '二级',
                       value: 2
                     }],
-        state:[{
-                        label: '待审批',
+        workState:[{
+                        label: '作业中',
                         value: 0
                     }, {
-                        label: '审批中',
+                        label: '已关闭',
                         value: 1
-                    }, {
-                        label: '已撤销',
-                        value: 2
-                    }, {
-                        label: '通过',
-                        value: 3
-                    }, {
-                        label: '不通过',
-                        value: 4
                     }],
           source:[{
                         label: '新建',
@@ -236,7 +212,7 @@ const queryTableData = () => {
   obj.pageSize = workData.table.pageSize;
   obj.workType = 0;
   let user = JSON.parse(localStorage.getItem('userData'))
-  getWorkPermitList(obj,user.username)
+  getWorkCourseList(obj,user.username)
     .then((res)=>{
       workData.table.tableLoading = false;
       if(res.code === 200){

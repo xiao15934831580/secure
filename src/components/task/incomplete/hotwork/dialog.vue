@@ -102,27 +102,6 @@
                                         </el-radio-group>
                                     </el-form-item>        
                                     <p class="titleName">关联作业票</p>
-                                    <!-- <el-form-item class="workCard" v-for="  (item,index) in dialogData.formData.options"
-                                                    label= "作业票"
-                                                    :key = 'index'
-                                                    :prop="'options.' + index + '.value'"
-                                                    :rules="[{required: true, message: '作业票不能为空', trigger: 'blur'}]"
-                                    >
-                                        <el-select
-                                        v-model="item.value"
-                                        placeholder="请选择作业票"
-                                        clearable
-                                        >
-                                            <el-option v-for="item in dialogData.dropdown.courseName" :key="item.courseId" :label="item.courseName" :value="item.courseId" required>
-                                            </el-option>
-                                        </el-select>
-                                        <el-icon class="ml-16" v-if="dialogData.props.title !== '查看'&& index>0" :size = '20' @click.prevent="removeOption(item,index)"><Remove /></el-icon>
-                                    </el-form-item>       
-                                    <el-button
-                                        class="addOptions"
-                                        @click="addOptions()"
-                                        type="success"
-                                        > + 增加选项</el-button> -->
                                     <el-form-item label="选择作业票" prop="relationWorkNos" required>    
                                             <el-cascader
                                             v-model="dialogData.formData.relationWorkNos"

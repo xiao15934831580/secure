@@ -254,3 +254,30 @@ export const writeWorkRebuild = (workId,username) => {
         method: 'GET',
     })
 }
+/**********************作业过程************************ */
+export const getWorkCourseList = (data,username) => {
+    return http({
+        url: '/hongyun-training/workpermit/getWorkCourseList',
+        method: 'POST',
+        headers: {'username' : username},
+        data
+    })
+}
+/**********************已归档作业票************************ */
+export const getWorkCloseList = (data,username) => {
+    return http({
+        url: '/hongyun-training/workpermit/getWorkCloseList',
+        method: 'POST',
+        headers: {'username' : username},
+        data
+    })
+}
+/**
+ * 查看已归档作业票
+ */
+ export const getWorkCloseInfo = (id) => {
+    return http({
+        url: '/hongyun-training/workpermit/getWorkCloseInfo?workId='+id,
+        method: 'GET',
+    })
+}

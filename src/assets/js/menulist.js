@@ -124,7 +124,7 @@ const menulist = [
             },
             {
                 path: 'incomplete',
-                menuName: '未完成作业票'
+                menuName: '作业过程'
             },
             {
                 path: 'archived',
@@ -137,6 +137,10 @@ const menulist = [
             {
                 path: 'report',
                 menuName: '作业票统计报表'
+            },
+            {
+                path:'configuration',
+                menuName:'配置信息'
             },
             {
                 path: 'credential',
