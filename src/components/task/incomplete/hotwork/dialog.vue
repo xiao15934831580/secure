@@ -7,7 +7,7 @@
                     <el-icon  class="callback" :size = '20' @click="callback"><Back /></el-icon>
                     <span class="callback ml-16" @click="callback">返回</span>
                     <span class="split"></span>
-                    <span>{{dialogData.props.title}}</span>
+                    <span class="font_w">{{dialogData.props.title}}</span>
                     </p>
             </div>
             <div class="bottomBox bg_color">
@@ -107,7 +107,7 @@
                                             v-model="dialogData.formData.relationWorkNos"
                                             placeholder="请选择作业票"
                                             :options="dialogData.dropdown.options"
-                                            :props="cascaderprops"
+                                            multiple
                                             filterable
                                             />
                                     </el-form-item>

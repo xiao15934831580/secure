@@ -211,7 +211,7 @@ export const getCompanyList = () => {
 //查看动火方式
 export const getDataDictionaryList = (ids) => {
     return http({
-        url: '/hongyun-training/common/getDataDictionaryList?ids='+ids,
+        url: '/hongyun-training/common/getDataDictionaryList?parentId='+ids,
         method: 'GET',
     })
 }
@@ -279,5 +279,42 @@ export const getWorkCloseList = (data,username) => {
     return http({
         url: '/hongyun-training/workpermit/getWorkCloseInfo?workId='+id,
         method: 'GET',
+    })
+}
+/**********************配置信息************************ */
+export const getWorkConfig = () => {
+    return http({
+        url: '/hongyun-training/getWorkConfig/getWorkConfig',
+        method: 'GET',
+    })
+}
+//编辑
+export const fillWorkConfig = (id) => {
+    return http({
+        url: '/hongyun-training/getWorkConfig/fillWorkConfig?workConfigType='+id,
+        method: 'GET',
+    })
+}
+//获取摄像头
+export const getVideoList = () => {
+    return http({
+        url: '/hongyun-training/getWorkConfig/getVideoList',
+        method: 'GET',
+    })
+}
+//安全措施提交
+export const operateWorkConfig = (data) => {
+    return http({
+        url: '/hongyun-training/getWorkConfig/operateWorkConfig',
+        method: 'POST',
+        data
+    })
+}
+//ef安全措施提交
+export const operateWorkConfigEF = (data,type) => {
+    return http({
+        url: '/hongyun-training/getWorkConfig/operateWorkConfigEF?workConfigType='+type,
+        method: 'POST',
+        data
     })
 }

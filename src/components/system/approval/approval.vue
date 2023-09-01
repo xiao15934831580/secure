@@ -1,173 +1,70 @@
 <template>
-<div class="totalStyle datadictionary">
+<div class="totalStyle approval">
 
     <div class="tablestyle">
       <div class="titleStyle">
-        <p   class="leftTitle font_w">成员与部门</p>
+        <p   class="leftTitle font_w">审批流程</p>
       </div>
       <div class="bottomBox flex">
           <div class="leftBox">
-              <p>滨州港({{modeldata.treeData.componyNum}}人)</p>
+              <p>审批模板</p>
               <el-button class="mt-16 addPart" type=""   @click="addNewPart"
-                >+添加部门</el-button>
+                >+新建模板</el-button>
                 <div class="treeBox mt-16">
-                  <el-tree :data="modeldata.treeData.componyData" 
-                            node-key="id"
-                            default-expand-all = 'true'
-                            :props="{ children: 'children',label: 'companyName',level:'companyLevel'}" 
-                            @node-click="handleNodeClick" >
-                             <template  v-slot:default="{ node, data }">
-                              <div @click="showTreeData(data)" >
-
-                                  <!-- 不可编辑情况 -->
-                                <span v-if="data.id != modeldata.treeData.operationVis" class="custom-tree-node">
-                                    <span style="display: inline-block;">{{ node.label }}</span>
-                                    <span>
-                                        <el-dropdown>
-                                          <span class="el-dropdown-link">
-                                           <el-icon ><MoreFilled /></el-icon>
-                                          </span>
-                                          <template #dropdown>
-                                            <el-dropdown-menu>
-                                              <el-dropdown-item command="a" @click="editTree(node,data)">编辑</el-dropdown-item>
-                                              <el-dropdown-item command="b" v-if = 'node.level !== 5' @click="addTreeNode(data)">添加子部门</el-dropdown-item>
-                                              <el-dropdown-item command="c" @click="moveTreeNode(data.id)">上移</el-dropdown-item>
-                                              <el-dropdown-item command="d" @click="delTreeNode(data.id)">删除</el-dropdown-item>
-                                            </el-dropdown-menu>
-                                          </template>
-                                        </el-dropdown>
-                                    </span>
+                    <div class="between">
+                        <p>一级模板</p>
+                        <span>
+                            <el-dropdown>
+                                <span class="el-dropdown-link">
+                                <el-icon ><MoreFilled /></el-icon>
                                 </span>
-                                <!-- 可编辑情况 -->
-                                <span v-else class="custom-tree-node">
-                                    <input
-                                        style="width: 50%"
-                                        size="mini"
-                                        ref="inputVal"
-                                        :value="node.label"
-                                        placeholder="请输入分类名"
-                                        @change="nameChange(node,data,$event)"
-                                    />
-                                    <span> 
-                                    </span>
-                                  </span>
-                              </div>
-                          </template>
-                  </el-tree>
+                                <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="a" @click="editTree(node,data)">编辑</el-dropdown-item>
+                                    <el-dropdown-item command="b" @click="addTreeNode(data)">添加子部门</el-dropdown-item>
+                                    <el-dropdown-item command="c" @click="moveTreeNode(data.id)">上移</el-dropdown-item>
+                                    <el-dropdown-item command="d" @click="delTreeNode(data.id)">删除</el-dropdown-item>
+                                </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </span>
+                    </div>
                 </div>
           </div>
           <div class="rightBox"> 
             <div class="partTitle">
-              <p class="partName">{{modeldata.table.companyName}}({{modeldata.table.total}}人)</p>
+              <p class="partName">一级模板</p>
               <div>
                 <el-button type=""   @click="addDirector"
-                  >部门主管</el-button>
-                <el-button type="primary" plain  @click="handleBuild"
-                  >添加成员</el-button>
+                  >保存</el-button>
               </div>
-            </div>
-            <div class="searchsize mt-16">
-              <el-col  class="searchBox">
-                <el-input
-                  class="w-10 m-2 mr-16 float-left"
-                  v-model="modeldata.searchValue.realName"
-                  placeholder="请输入姓名"
-                />
-                <el-button type="primary" plain  @click="queryTableData(modeldata.table.componyId)"
-                >查询</el-button>
-              </el-col>
             </div>
             <div class="chartstyle">
-              <el-table
-                :data="modeldata.table.tableData"
-                :header-cell-style="{ background: '#F2F5FA' }"     
-                border
-                style="width: 100%"
-              > 
-                <!-- <el-table-column label="序号" min-width="7%">
-                      <template #default="requestscope">
-                            <span >{{
-                              requestscope.$index+1 + (modeldata.table.pageSize*(modeldata.table.pageIndex-1))
-                            }}</span>
-                      </template>
-                </el-table-column> -->
-                <el-table-column prop="realName"   label="姓名" min-width="13%" >
-                    <template #default="scope">
-                              {{scope.row.realName}}&nbsp;&nbsp;<span v-if="scope.row.principalFlg">
-                                      <el-tag 
-                                        :type="'danger'"
-                                        effect="light"
-                                        disable-transitions
-                                        >主管</el-tag>
-                                </span>
-                      </template>
-                </el-table-column>
-                <el-table-column prop="userName"   label="账号" min-width="10%" />
-                <el-table-column prop="phone"  label= '手机号' min-width="10%" />
-                <el-table-column prop="roleName"  label= '角色' min-width="10%" />
-                <el-table-column prop="companyNames"  label= '部门' min-width="10%" >
-                    <template #default="scope">
-                        <span>{{scope.row.companyNames.join(',')}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="photoUrl"  label= '证件照' min-width="10%" >
-                    <template #default="scope">
-                      <el-button size="small" @click="handleLook(scope.$index, scope.row)"
-                        >查看</el-button
-                      >
-                    </template>
-                </el-table-column>
-                <el-table-column prop="status"  label= '账号状态' min-width="7%" >
-                  <template #default="status_scope">
-                              <span v-if="status_scope.row.status">
-                                      <el-switch v-model="status_scope.row.status"  disabled />
-                                </span>
-                                <span v-else>
-                                      <el-switch v-model="status_scope.row.status"  disabled />
-                                </span>
-                      </template>
-                </el-table-column>
-                <el-table-column prop="disablingReason"  label= '禁用原因' min-width="10%">
-                  <template #default="scope">
-                              <span v-if="scope.row.status">
-                                       --
-                                </span>
-                                <span v-else>
-                                      {{scope.row.disablingReason}}
-                                </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="操作列" width="250" min-width="28%">
-                  <template #default="scope">
-                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-                      >编辑</el-button>
-                    <!-- <el-button  size="small" @click="handleLook(scope.$index, scope.row)"
-                      >变更部门</el-button> -->
-                    <el-button
-                      size="small"
-                      type="danger"
-                      @click="resetPassword(scope.$index, scope.row)"
-                      >重置密码</el-button>
-                  </template>
-                </el-table-column>
-                <template #empty>
-                    <el-empty v-loading="modeldata.table.tableLoading"></el-empty>
-                </template>
-              </el-table>
-              <div class="demo-pagination-block">
-                <el-pagination
-                  :pageIndex="modeldata.table.pageIndex"
-                  :page-size="modeldata.table.pageSize"
-                  :page-sizes="[5, 10, 15, 20]"
-                  :small="small"
-                  :disabled="disabled"
-                  :background="background"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  :total="modeldata.table.total"
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                />
-              </div>
+                <div v-if="!modeldata.approvalData.showApproval">
+                    <el-empty>
+                        <el-button @click="setApproval" type="primary">设置</el-button>
+                    </el-empty>
+                </div>
+                 <div v-else class="approvalBox">
+                     <div class="cardBox">
+                         <div  class="topBox between">
+                             <span>一级模板<el-icon class="edit_icon"><Edit /></el-icon></span>
+                             <el-icon style="color:#A9AFB9" class="m-2"><Close /></el-icon>
+                         </div>
+                         <div  class="bottomContent">
+                             <el-select v-model="value" class="m-2" placeholder="请选择人员" >
+                                <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                                />
+                            </el-select>
+                         </div>
+                     </div>
+                     <span :size = '30' class="mt-16 addApproval"><el-icon><Bottom /></el-icon></span>
+                     <el-button class="addApproval mt-16" type="primary">添加审批流</el-button>
+                 </div>   
             </div>
           </div>
       </div>
@@ -247,22 +144,22 @@
       </el-dialog>
   </div>
   <!-- 添加成员 -->
-    <Dialog
+    <!-- <Dialog
     v-model="modeldata.dialog.dialogMemberShow"
     :dialogFormVisible="modeldata.dialog.dialogMemberShow"
     :dialogTitle="modeldata.dialog.memberTitle"
     :dialogTableValue="modeldata.dialog.memberData"
-  ></Dialog>
+  ></Dialog> -->
 
 </div>
 
 </template>
 <script setup>
-import Dialog from "./edituser.vue";
+// import Dialog from "./edituser.vue";
 import { onBeforeMount, watch, getCurrentInstance } from "vue";
 import { reactive, ref, markRaw} from "vue";
 import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
-import { Warning } from "@element-plus/icons-vue";
+import { Warning,Close,Bottom,Edit } from "@element-plus/icons-vue";
 import store from '@/store'
 import { getCompany as getCompany,operateCompany as operateCompany,deleteCompany as deleteCompany,operateCompanyOrder as operateCompanyOrder,
 companyPeopleNum as companyPeopleNum,getUsersByCompanyId as getUsersByCompanyId,setPrincipalUserId as setPrincipalUserId,
@@ -273,9 +170,6 @@ const popoverRef = ref()
 let modeldata =  reactive({
     dialogimgVisible:false,
     imgurl:'',
-    searchValue:{
-      realName:''
-    },
     dropdown:{
       userList:[{}]
     },
@@ -292,18 +186,9 @@ let modeldata =  reactive({
       memberTitle:'',
       memberData: []
     },
-    treeData: {
-      componyData:[],
-      operationVis:'',
-      componyNum:''
-    },
-    table:{
-        tableLoading: false,
-        componyId:'',
-        pageIndex: 1,
-        pageSize: 10,
-        total:0,
-        tableData: [],
+    approvalData:{
+        showApproval:false,
+        showSaveButton:false,
     }
 })
 const queryTableData = (companyId) => {
@@ -334,74 +219,25 @@ const queryTableData = (companyId) => {
     })
     .catch(()=>{})
 };
-const getCompanyFun = ()=>{
-  getCompany().then((res)=>{
-    if(res.code === 200){
-        modeldata.treeData.componyData = res.body;
-        modeldata.table.companyName = modeldata.treeData.componyData[0].companyName;
-        modeldata.table.componyId = modeldata.treeData.componyData[0].id;
-        queryTableData(modeldata.table.componyId)
-    }else{
-        ElNotification({
-              title: 'Warning',
-              message: res.message?res.message:'服务器异常',
-              type: 'warning',
-            })
-            if(res.code === 100007 ||  res.code === 100008){
-                    store.dispatch('app/logout')
-                }
-    }
-  })
-}
-const companyPeopleNumFun = () => {
-  companyPeopleNum().then((res)=>{
-    if(res.code === 200){
-        modeldata.treeData.componyNum = res.body;
-    }else{
-        ElNotification({
-              title: 'Warning',
-              message: res.message?res.message:'服务器异常',
-              type: 'warning',
-            })
-            if(res.code === 100007 ||  res.code === 100008){
-                    store.dispatch('app/logout')
-                }
-    }
-  })
-}
-const getUserListFun = () => {
-    let  componyId = modeldata.table.componyId
-  getUserList(componyId).then((res)=>{
-    if(res.code === 200){
-        modeldata.dropdown.userList = res.body;
-    }else{
-        ElNotification({
-              title: 'Warning',
-              message: res.message?res.message:'服务器异常',
-              type: 'warning',
-            })
-            if(res.code === 100007 ||  res.code === 100008){
-                    store.dispatch('app/logout')
-                }
-    }
-  })
-}
+
 onBeforeMount(()=>{
-  getCompanyFun()
-  companyPeopleNumFun()
-  
+//   getCompanyFun()
+//   companyPeopleNumFun()
+//   getUserListFun()
 })
 watch(
     () => modeldata.dialog.dialogMemberShow,
     () => {
       if(!modeldata.dialog.dialogMemberShow){
-        queryTableData(modeldata.table.componyId)
-        
+        // queryTableData(modeldata.table.componyId)
       }
     },
     { deep: true, immediate: true }
 )
-
+//设置
+const setApproval = () => {
+    modeldata.approvalData.showApproval = true
+}
 //部门数据改动
 const operateCompanyFun = (obj) => {
   operateCompany(obj).then((res) => {
@@ -562,7 +398,6 @@ const resetPassword = (index, row) => {
 const addDirector = () => {
   modeldata.dialog.title = '部门主管'
   modeldata.dialog.dialogEditVisible = true;
-  getUserListFun()
 }
 // 关闭弹框
 const closeDialog = () => {
@@ -606,7 +441,7 @@ const handleLook = (index,row)=>{
 }
 </script>
 <style  lang = 'less' scoped>
-.datadictionary{
+.approval{
     :deep(.el-table--fit){
       height:100%;
     }
@@ -679,7 +514,7 @@ const handleLook = (index,row)=>{
       width: 80%;
       padding: 16px;
       .chartstyle {
-        height: calc(100% - 170px);
+        height: calc(100% - 41px);
       }
     }
     .leftBox{
@@ -698,16 +533,36 @@ const handleLook = (index,row)=>{
       align-items: center;
       justify-content: space-between;
     }
-    .custom-tree-node{
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    padding-right: 8px;
-}
-  :deep(.el-tree-node__label){
-    width: 100%;
-  }
+    .cardBox{
+        width: 30%;
+        height: 80px;
+        background-color: #EDF0F5;
+        border-radius: 8px;
+        padding: 8px;
+        margin: 0 auto;
+        .topBox{
+            height: 30px;
+        }
+        :deep(.el-select){
+            width: 100%;
+        }
+        :deep(.el-input){
+            width: 100%;
+        }
+
+    }
+    .approvalBox{
+        display: flex;
+        flex-direction: column;
+    }
+    .addApproval{
+        width: 30%;
+        margin: 0 auto;
+        text-align: center;
+    }
+    .edit_icon{
+        margin-left: 8px;
+        margin-top: 2px;
+    }
 }
 </style>

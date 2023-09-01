@@ -7,7 +7,7 @@
                     <el-icon  class="callback" :size = '20' @click="callback"><Back /></el-icon>
                     <span class="callback ml-16" @click="callback">返回</span>
                     <span class="split"></span>
-                    <span>{{dialogData.props.title}}</span>
+                    <span class="font_w">{{dialogData.props.title}}</span>
                     </p>
             </div>
             <div class="bottomBox bg_color">
@@ -526,7 +526,6 @@ const beforeAvatarUpload = (file)=>{
       }
 }
 const uploadSucceed = (file)=>{
-
     console.log(file)
     let obj = {
         url:file.body

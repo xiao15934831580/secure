@@ -1,8 +1,8 @@
 <template>
-<div class="totalStyle roleBox">
+<div class="totalStyle datadictionary">
     <div class="tablestyle">
       <div class="titleStyle">
-        <p  class="leftTitle font_w">角色管理</p>
+        <p   class="leftTitle font_w">成员证书</p>
         <el-button type="primary"   @click="handleBuild">新建</el-button>
       </div>
       <div class="bottomBox">
@@ -10,13 +10,18 @@
           <el-col  class="searchBox">
             <el-input
               class="w-10 m-2 mr-16 float-left"
-              v-model="modeldata.searchValue.roleName"
-              placeholder="请输入名称"
+              v-model="modeldata.searchValue.workSort"
+              placeholder="请选择作业类别"
             />
             <el-input
               class="w-10 m-2 mr-16 float-left"
-              v-model="modeldata.searchValue.authority"
-              placeholder="请输入管理权限"
+              v-model="modeldata.searchValue.workType"
+              placeholder="请选择关联八大作业"
+            />
+            <el-input
+              class="w-10 m-2 mr-16 float-left"
+              v-model="modeldata.searchValue.realName"
+              placeholder="请输入关联成员"
             />
             <el-button type="primary" plain  @click="queryTableData"
             >查询</el-button>
@@ -36,10 +41,21 @@
                         }}</span>
                   </template>
             </el-table-column>
-            <el-table-column prop="roleName"  label="名称" min-width="10%" />
-            <el-table-column prop="authorityStr"   label="管理权限" min-width="10%" />
-            <el-table-column prop="roleDesc"  label= '描述' min-width="10%" />
-            <!-- <el-table-column prop="dataNo"  label= '编码' min-width="10%" /> -->
+            <el-table-column prop="certificateNo"   label="证书编号" min-width="10%" />
+            <el-table-column prop="workSort"  label="作业类别" min-width="10%" />
+            <el-table-column prop="operateProject" label= '操作项目' min-width="10%" />
+            <el-table-column prop="startAndEndTime" label= '有效期限'  min-width="10%" />
+            <el-table-column prop="signPlace" label= '签发机关'  min-width="10%" />
+            <el-table-column label= '证书照片'  min-width="10%" >
+              <template #default="scope">
+                      <el-button size="small" @click="handleLook(scope.$index, scope.row)"
+                        >查看</el-button
+                      >
+                    </template>
+            </el-table-column>
+            <el-table-column prop="workTypeStr" label= '关联八大作业'  min-width="10%" />
+            <el-table-column prop="realName" label= '关联成员'  min-width="10%" />
+            <el-table-column prop="takeEffect" label= '是否在有效期内'  min-width="10%" />
             <el-table-column label="操作列" width="250" min-width="28%">
               <template #default="scope">
                 <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
@@ -71,107 +87,77 @@
           </div>
         </div>
       </div>
-</div>
-  <!-- 编辑 -->
-  <div class="dialogBox">
-       <el-dialog
-        ref="editDataRef"
-        :model-value="modeldata.dialog.dialogEditVisible"
-        :title="modeldata.dialog.title"
-        :before-close="closeDialog"
-        width="40%"
+  </div>
+    <div class="lz-dialog">
+        <el-dialog
+        ref="imgRef"
+        :model-value="modeldata.dialogimgVisible"
+        title="证件照"
+        :before-close="closeImg"
+        width="30%"
         :close-on-click-modal ="false"
         draggable
         >
-            <div>
-                <el-form
-                :model="modeldata.dialog.tableData"
-                :inline="true"
-                label-width="160px"
-                :rules="modeldata.dialog.rules"
-                ref="addform"
-                require-asterisk-position="left"
-                size="default"
-                scroll-to-error="true"
-            >
-                <el-form-item label="名称" prop="roleName" required>
-                    <el-input
-                        placeholder="请输入名称"
-                        v-model="modeldata.dialog.tableData.roleName"
-                    />
-                </el-form-item>
-                <el-form-item label="管理权限" prop="authority" required>
-                    <el-radio-group v-model="modeldata.dialog.tableData.authority">
-                        <el-radio :label="0">管理员(看所有数据)</el-radio>
-                        <el-radio :label="1">普通员工(仅看自己数据)</el-radio>
-                      </el-radio-group>
-                </el-form-item>
-                <el-form-item label="后台管理权限" prop="menuNumLbl" required>
-                    <el-cascader
-                      v-model="modeldata.dialog.tableData.menuNumLbl"
-                      :options="modeldata.dropdown.menuList"
-                      :props="{ value: 'menuId',label: 'menuName',children: 'children',multiple: true}"
-                      collapse-tags
-                      collapse-tags-tooltip
-                      clearable
-                    />
-                </el-form-item>                
-                <el-form-item label="描述"  >
-                    <el-input
-                        placeholder="请输入描述"
-                        v-model="modeldata.dialog.tableData.roleDesc"
-                    />
-                </el-form-item>
-            </el-form>
+            <div class="userPassword">
+              <el-image
+              :src="modeldata.imgurl"
+              :zoom-rate="1.2"
+              :initial-index="4"
+              fit="cover"
+            />
+
             </div>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button class="btn-mixins-clear-default" @click="closeDialog"
-                    >取消</el-button>
-                <el-button class="btn-mixins-clear-default" @click="saveData(addform)"
-                    >确定</el-button>
-                
+                <el-button class="btn-mixins-clear-default" @click="closeImg"
+                    >返回</el-button>
                 </span>
         </template>
-        </el-dialog>
+      </el-dialog>
   </div>
-
-
+      <Dialog
+      v-model="modeldata.dialog.dialogEditVisible"
+      :dialogFormVisible="modeldata.dialog.dialogEditVisible"
+      :dialogTitle="modeldata.dialog.title"
+      :dialogTableValue="modeldata.dialog.formData"
+  ></Dialog>
 </div>
 
 </template>
 <script setup>
-// import Dialog from "./dialog.vue";
-import { onBeforeMount, watch } from "vue";
+import Dialog from "./editData.vue";
+import { onBeforeMount, watch, getCurrentInstance } from "vue";
 import { reactive, ref, markRaw} from "vue";
 import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { Delete } from "@element-plus/icons-vue";
 import store from '@/store'
-import { deleteRole as deleteRole,operateRole as operateRole,getRoleAuthorityList as getRoleAuthorityList, getMenuList as getMenuList} from '@/api/user.js'
+import { certificateList as certificateList} from '@/api/user.js'
+import {onMounted} from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const editDataRef = ref('');
 const addform = ref('')
-const props = { multiple: true }
 let modeldata =  reactive({
+    dialogimgVisible:false,
+    imgurl:'',
     searchValue:{
-      roleName:'',
-      authority:''
+      realName:'',
+      workSort:'',
+      workType:''
     },
-    dropdown:{
-      menuList:[{}]
+    detail:{
+      name:'明细',
+      isShow: false,
+      parentId:0
     },
     dialog: {
       dialogEditVisible:false,
       title:'新增',
-      tableData:{
-        roleName:'',
-        authority:'',
-        menuNumLbl:[],
-        roleDesc:''
+      formData:{
       },
       rules:{
-        roleName:[{ required: true, message: "请输入名称", trigger: "blur" }],
-        authority:[{ required: true, message: "请输入编码", trigger: "blur" }],
-        menuNumLbl:[{ required: true, message: "请选择后台管理权限", trigger: "change" }],
+        dataValue:[{ required: true, message: "请输入名称", trigger: "blur" }],
+        dataNo:[{ required: true, message: "请输入编码", trigger: "blur" }]
       }
     },
     table:{
@@ -187,8 +173,7 @@ const queryTableData = () => {
   let obj = JSON.parse(JSON.stringify(modeldata.searchValue))
   obj.pageIndex = modeldata.table.pageIndex
   obj.pageSize = modeldata.table.pageSize
-  console.log(obj)
-  getRoleAuthorityList(obj)
+  certificateList(obj)
     .then((res)=>{
       modeldata.table.tableLoading = false;
       if(res.code === 200){
@@ -209,25 +194,6 @@ const queryTableData = () => {
     })
     .catch(()=>{})
 };
-const getMenuListFun = () => {
-  getMenuList().then((res) => {
-    if(res.code === 200){
-        modeldata.dropdown.menuList = res.body;
-    }else{
-        ElNotification({
-              title: 'Warning',
-              message: res.message?res.message:'服务器异常',
-              type: 'warning',
-            })
-            if(res.code === 100007 ||  res.code === 100008){
-                    store.dispatch('app/logout')
-                }
-    }
-  })
-}
-onBeforeMount(()=>{
-  getMenuListFun()
-})
 watch(
     () => modeldata.dialog.dialogEditVisible,
     () => {
@@ -250,18 +216,30 @@ const handleCurrentChange = (val) => {
 };
 //新建
 const handleBuild = () => {
-  modeldata.dialog.title = "新建";
+  modeldata.dialog.title = modeldata.detail.isShow?'明细新建': "新建";
   modeldata.dialog.dialogEditVisible = true;
-  modeldata.dialog.tableData = []
 };
 //编辑
 const handleEdit = (index, row) => {
-  modeldata.dialog.title =  "编辑";
+  modeldata.dialog.title =  modeldata.detail.isShow?'明细编辑': "编辑";
   modeldata.dialog.tableData = JSON.parse(JSON.stringify(row));
   modeldata.dialog.dialogEditVisible = true;
 };
-
-
+const closeImg = ()=>{
+  modeldata.dialogimgVisible = false;
+}
+//证件照
+const handleLook = (index,row)=>{
+  modeldata.imgurl = row.frontFileUrl;
+  modeldata.dialogimgVisible = true;
+}
+//返回
+const callback = () => {
+  modeldata.detail.isShow = false;
+  //获取所有数据
+  modeldata.detail.parentId = 0;
+  queryTableData()
+}
 //删除
 const handleDelete = (index, row) => {
   ElMessageBox.confirm("你确定删除此数据吗?", "删除", {
@@ -269,7 +247,7 @@ const handleDelete = (index, row) => {
     icon: markRaw(Delete),
   })
     .then(() => {
-      deleteRole(row.roleId).then((res)=>{
+      deleteDataDictionary(row.id).then((res)=>{
         if(res.code === 200){
             if(modeldata.table.tableData.length === 0&& modeldata.table.pageIndex>1){
               modeldata.table.pageIndex = modeldata.table.pageIndex -1;
@@ -295,7 +273,8 @@ const handleDelete = (index, row) => {
 
 // 关闭弹框
 const closeDialog = () => {
-   addform.value.resetFields();
+  // modeldata.dialog.tableData = []
+  addform.value.resetFields();
   modeldata.dialog.dialogEditVisible = false;
 };
 //表单提交
@@ -303,16 +282,9 @@ const saveData = (addform) => {
     if (!addform) return;
   addform.validate(async (valid) => {
     if (valid) {
-      let obj={};
-      if( modeldata.dialog.title === "新建"){
-        obj.roleName = modeldata.dialog.tableData.roleName,
-        obj.authority= modeldata.dialog.tableData.authority,
-        obj.menuNumLbl= modeldata.dialog.tableData.menuNumLbl,
-        obj.roleDesc= modeldata.dialog.tableData.roleDesc
-      }else {
-        obj =  JSON.parse(JSON.stringify(modeldata.dialog.tableData))
-      }
-      operateRole(obj).then((res)=>{
+      let obj =  JSON.parse(JSON.stringify(modeldata.dialog.tableData));
+      obj.parentId = modeldata.detail.isShow?modeldata.detail.parentId:'0'
+      operateDataDictionary(obj).then((res)=>{
         if(res.code ===200){
             closeDialog()
             queryTableData()
@@ -334,7 +306,7 @@ const saveData = (addform) => {
 }
 </script>
 <style  lang = 'less' scoped>
-.roleBox{
+.datadictionary{
     :deep(.el-table--fit){
       height:100%;
     }
@@ -365,7 +337,7 @@ const saveData = (addform) => {
                 width: 100%;
             }
           :deep(.el-form-item--default .el-form-item__content){
-            width: calc(100% - 160px);
+            width: calc(100% - 80px);
         }
           :deep(.el-dialog__header) {
             border-bottom: 1px solid #cccccc;
@@ -374,9 +346,6 @@ const saveData = (addform) => {
             display: flex;
             justify-content: space-between;
             align-items: center;
-          }
-          :deep(.el-dialog__body){
-            padding-right:60px
           }
           :deep(.el-dialog__title) {
             color: #1C222C;
@@ -391,13 +360,20 @@ const saveData = (addform) => {
             width: auto;
             height: auto;
           }
-          :deep(.el-cascader){
-            width: 100%;
-          }
     }
 
     .totalStyle{
         height: 100%;
+    }
+
+.split{
+    width: 1px;
+    height: 20px;
+    background-color: #DADFE6;
+    margin: 0 16px;
+}
+    .callback{
+        cursor: pointer;
     }
 }
 </style>

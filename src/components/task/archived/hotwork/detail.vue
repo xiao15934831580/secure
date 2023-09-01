@@ -7,7 +7,7 @@
                     <el-icon  class="callback" :size = '20' @click="callback"><Back /></el-icon>
                     <span class="callback ml-16" @click="callback">返回</span>
                     <span class="split"></span>
-                    <span>查看</span>
+                    <span class="font_w">查看</span>
                     
                     </p>
                     <el-button type="" @click="pdfFunc">下载</el-button>

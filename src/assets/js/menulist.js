@@ -131,20 +131,12 @@ const menulist = [
                 menuName: '已归档作业票'
             },
             {
-                path: 'details',
-                menuName: '作业票详情'
-            },
-            {
                 path: 'report',
-                menuName: '作业票统计报表'
+                menuName: '作业票统计'
             },
             {
                 path:'configuration',
                 menuName:'配置信息'
-            },
-            {
-                path: 'credential',
-                menuName: '作业人员资质验证查询'
             },
         ]
     },
@@ -155,34 +147,25 @@ const menulist = [
             children: [
 
                 {
-                    path:'systemdesign',
-                    menuName:'系统设置',
-                    children: [
-                        {
-                            path: 'ratingmodel',
-                            menuName: '服务评价设置',
-                        },
-                        {
-                            path: 'creditmodel',
-                            menuName: '信用级别设置',
-                        },
-                        {
-                            path: 'powerdate',
-                            menuName: '电站保质期设置',
-                        },
-                    ]
+                    path:'datadictionary',
+                    menuName:'数据字典',
                 },
-                {
-                    path: 'user',
-                    menuName: '用户管理',
-                },
+
                 {
                     path: 'role',
                     menuName: '角色管理',
                 },
                 {
-                    path: 'log',
-                    menuName: '系统日志',
+                    path: 'user',
+                    menuName: '成员和部门',
+                },
+                {
+                    path: 'usercertificate',
+                    menuName: '成员证书',
+                },
+                {
+                    path: 'approval',
+                    menuName: '审批流程',
                 },
             ]
     },

@@ -14,7 +14,7 @@
     </div>
   </div>
     <div class="totalStyle" v-if="!hotwork.showList">
-        <Dialog v-if="hotwork.showHotworkEdit"     @callback = 'callback'></Dialog>
+        <Dialog v-if="hotwork.showHotworkEdit"     @callback = 'callback' :titleName='hotwork.editData.titleName'></Dialog>
         <!-- <Detail v-if="hotwork.showHotworkLook" :hotWorkId = 'hotwork.hotworkContent.hotWorkId' @callback = 'callback'></Detail> -->
     </div>
 </template>
@@ -32,6 +32,9 @@ let hotwork =  reactive({
       hotWorkId:'',
       dropdown:''
     },
+    editData:{
+      titleName: ""
+    }
 })
 
 
@@ -39,6 +42,7 @@ let hotwork =  reactive({
 const editData = (obj)=>{
   hotwork.showHotworkEdit = obj.showHotworkEdit;
   hotwork.showList = false;
+  hotwork.editData.titleName = obj.titleName
   // hotwork.hotworkContent.title = '重建';
   //  hotwork.hotworkContent.dropdown = obj.dropdown;
   //  hotwork.hotworkContent.hotWorkId = obj.hotWorkId;

@@ -41,27 +41,6 @@ const routes = [
           title: '安全审计',
         },
       },
-      // {
-      //   path: '/plan',
-      //   name: '培训规划及方式',
-      //   component: () => import('../components/trainingmanagement/plan/plan.vue'),
-      //   meta: {
-      //     title: '培训规划及方式',
-      //   },
-      // },
-      // {
-      //   path: '/course',
-      //   name: '培训课程及内容',
-      //   component: () => import('../components/trainingmanagement/course/course.vue'),
-      //   meta: {
-      //     title: '培训课程及内容',
-      //   },
-      // },
-      // {
-      //   path: '/examine',
-      //   name: '培训考核',
-      //   component: () => import('../components/examinemanagement/examine/examine.vue'),
-      // },
 
 
 
@@ -273,19 +252,11 @@ const routes = [
         },
       },
       {
-        path: '/details',
-        name: '作业票详情',
-        component: () => import('../components/task/details/details.vue'),
-        meta: {
-          title: '作业票详情',
-        },
-      },
-      {
         path: '/report',
-        name: '作业票统计报表',
+        name: '作业票统计',
         component: () => import('../components/task/report/report.vue'),
         meta: {
-          title: '作业票统计报表',
+          title: '作业票统计',
         },
       },
       {
@@ -296,12 +267,55 @@ const routes = [
           title: '配置信息',
         },
       },
+  ]
+  },
+  {
+    path: '/system',
+    name: '系统管理',
+    redirect: '/datadictionary',
+    component: HomePage,
+    meta: {
+      title: '系统管理',
+    },
+    children: [
       {
-        path: '/credential',
-        name: '作业人员资质验证查询',
-        component: () => import('../components/task/credential/credential.vue'),
+        path: '/datadictionary',
+        name: '数据字典',
+        component: () => import('../components/system/datadictionary/datadictionary.vue'),
         meta: {
-          title: '作业人员资质验证查询',
+          title: '数据字典',
+        },
+      },
+      {
+        path: '/role',
+        name: '角色管理',
+        component: () => import('../components/system/role/role.vue'),
+        meta: {
+          title: '角色管理',
+        },
+      },
+      {
+        path: '/user',
+        name: '成员和部门',
+        component: () => import('../components/system/user/user.vue'),
+        meta: {
+          title: '成员和部门',
+        },
+      },
+      {
+        path: '/usercertificate',
+        name: '成员证书',
+        component: () => import('../components/system/usercertificate/usercertificate.vue'),
+        meta: {
+          title: '成员证书',
+        },
+      },
+      {
+        path: '/approval',
+        name: '审批流程',
+        component: () => import('../components/system/approval/approval.vue'),
+        meta: {
+          title: '审批流程',
         },
       },
   ]

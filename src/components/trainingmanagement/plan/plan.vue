@@ -2,7 +2,7 @@
 <div class="totalStyle">
     <div class="tablestyle">
       <div class="titleStyle">
-        <p class="leftTitle">培训规划及方式</p>
+        <p class="leftTitle font_w">培训规划及方式</p>
         <el-button type="primary"   @click="handleBuild">新建</el-button>
       </div>
       <div class="bottomBox">
