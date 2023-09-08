@@ -84,13 +84,6 @@
                 border
                 style="width: 100%"
               > 
-                <!-- <el-table-column label="序号" min-width="7%">
-                      <template #default="requestscope">
-                            <span >{{
-                              requestscope.$index+1 + (modeldata.table.pageSize*(modeldata.table.pageIndex-1))
-                            }}</span>
-                      </template>
-                </el-table-column> -->
                 <el-table-column prop="realName"   label="姓名" min-width="13%" >
                     <template #default="scope">
                               {{scope.row.realName}}&nbsp;&nbsp;<span v-if="scope.row.principalFlg">
@@ -112,9 +105,15 @@
                 </el-table-column>
                 <el-table-column prop="photoUrl"  label= '证件照' min-width="10%" >
                     <template #default="scope">
-                      <el-button size="small" @click="handleLook(scope.$index, scope.row)"
-                        >查看</el-button
-                      >
+                      <el-image
+                      style="width: 30px; height: 30px;margin-right:16px;"
+                        :src='scope.row.certificatePhotoUrl'
+                        :preview-src-list="[scope.row.certificatePhotoUrl]"
+                        :zoom-rate="1.2"
+                        :initial-index="4"
+                        fit="cover"
+                        preview-teleported="true"
+                      />
                     </template>
                 </el-table-column>
                 <el-table-column prop="status"  label= '账号状态' min-width="7%" >

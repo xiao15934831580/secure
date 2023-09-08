@@ -233,7 +233,7 @@ export const getUserList = () => {
 //获取审批模板
 export const getWorkTemplate = () => {
     return http({
-        url: '/hongyun-training/workpermit/getWorkTemplate',
+        url: '/hongyun-training/approve/getWorkTemplate',
         method: 'GET',
     })
 }

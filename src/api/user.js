@@ -191,6 +191,12 @@ export const getUserList = (companyId) => {
         method: 'GET',
     })
 }
+export const getUserList_ = () => {
+    return http({
+        url: '/hongyun-user/user/getUserList',
+        method: 'GET',
+    })
+}
 //获取角色列表
 export const getRoleList = () => {
     return http({
@@ -218,5 +224,49 @@ export const certificateList = (data) => {
         url: '/hongyun-training/certificate/certificateList',
         method: 'POST',
         data
+    })
+}
+//删除成员证书
+export const deleteCertificate = (id) => {
+    return http({
+        url: `/hongyun-training/certificate/deleteCertificate/${id}`,
+        method: 'DELETE',
+    })
+}
+//获取八大作业
+export const getEightWorkType = () => {
+    return http({
+        url: '/hongyun-training/common/getEightWorkType',
+        method: 'GET',
+    })
+} 
+//编辑提交表单
+export const operateCertificate = (data) => {
+    return http({
+        url: '/hongyun-training/certificate/operateCertificate',
+        method: 'POST',
+        data
+    })
+}
+/******************************审批模板********************************* */
+export const getWorkTemplate = () => {
+    return http({
+        url: '/hongyun-training/approve/getWorkTemplate',
+        method: 'GET',
+    })
+} 
+//新增编辑模板
+export const operateWorkTemplate = (data) => {
+    return http({
+        url: '/hongyun-training/approve/operateWorkTemplate',
+        method: 'POST',
+        data
+    })
+}
+//删除审批模板
+export const deleteWorkTemplate = (id) => {
+    return http({
+        url: `/hongyun-training/approve/deleteWorkTemplate/${id}`,
+        method: 'DELETE',
     })
 }

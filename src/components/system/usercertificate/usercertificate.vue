@@ -8,16 +8,19 @@
       <div class="bottomBox">
         <div class="searchsize">
           <el-col  class="searchBox">
-            <el-input
+            <!-- <el-input
               class="w-10 m-2 mr-16 float-left"
               v-model="modeldata.searchValue.workSort"
               placeholder="请选择作业类别"
-            />
-            <el-input
-              class="w-10 m-2 mr-16 float-left"
-              v-model="modeldata.searchValue.workType"
-              placeholder="请选择关联八大作业"
-            />
+            /> -->
+            <el-select
+                    v-model="modeldata.searchValue.workType"
+                    placeholder="请选择八大作业"
+                    clearable
+                    >
+                        <el-option v-for="item in modeldata.dropdown.eightWorkType" :key="item.key" :label="item.value" :value="item.key" required>
+                        </el-option>
+            </el-select>
             <el-input
               class="w-10 m-2 mr-16 float-left"
               v-model="modeldata.searchValue.realName"
@@ -48,9 +51,24 @@
             <el-table-column prop="signPlace" label= '签发机关'  min-width="10%" />
             <el-table-column label= '证书照片'  min-width="10%" >
               <template #default="scope">
-                      <el-button size="small" @click="handleLook(scope.$index, scope.row)"
-                        >查看</el-button
-                      >
+                      <el-image
+                        style="width: 30px; height: 30px;margin-right:16px;"
+                        :src='scope.row.photoFile[0]'
+                        :preview-src-list="[scope.row.photoFile[0]]"
+                        :zoom-rate="1.2"
+                        :initial-index="4"
+                        fit="cover"
+                        preview-teleported="true"
+                      />
+                      <el-image
+                        style="width: 30px; height: 30px"
+                        :src='scope.row.photoFile[1]'
+                        :preview-src-list="[scope.row.photoFile[1]]"
+                        :zoom-rate="1.2"
+                        :initial-index="4"
+                        fit="cover"
+                        preview-teleported="true"
+                      />
                     </template>
             </el-table-column>
             <el-table-column prop="workTypeStr" label= '关联八大作业'  min-width="10%" />
@@ -98,15 +116,18 @@
         :close-on-click-modal ="false"
         draggable
         >
+        <div class="demo-image__preview" >
             <div class="userPassword">
               <el-image
               :src="modeldata.imgurl"
+              :preview-src-list="modeldata.imgurlList"
               :zoom-rate="1.2"
               :initial-index="4"
               fit="cover"
             />
 
             </div>
+        </div>
             <template #footer>
                 <span class="dialog-footer">
                 <el-button class="btn-mixins-clear-default" @click="closeImg"
@@ -115,11 +136,11 @@
         </template>
       </el-dialog>
   </div>
-      <Dialog
+  <Dialog
       v-model="modeldata.dialog.dialogEditVisible"
       :dialogFormVisible="modeldata.dialog.dialogEditVisible"
       :dialogTitle="modeldata.dialog.title"
-      :dialogTableValue="modeldata.dialog.formData"
+      :dialogTableValue="modeldata.dialog.tableData"
   ></Dialog>
 </div>
 
@@ -131,7 +152,7 @@ import { reactive, ref, markRaw} from "vue";
 import { ElMessage, ElMessageBox,ElNotification } from "element-plus";
 import { Delete } from "@element-plus/icons-vue";
 import store from '@/store'
-import { certificateList as certificateList} from '@/api/user.js'
+import { certificateList as certificateList,deleteCertificate as deleteCertificate, getEightWorkType as getEightWorkType} from '@/api/user.js'
 import {onMounted} from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -140,10 +161,13 @@ const addform = ref('')
 let modeldata =  reactive({
     dialogimgVisible:false,
     imgurl:'',
+    imgurlList:[],
     searchValue:{
       realName:'',
-      workSort:'',
       workType:''
+    },
+    dropdown:{
+      eightWorkType:[],
     },
     detail:{
       name:'明细',
@@ -170,6 +194,7 @@ let modeldata =  reactive({
 })
 const queryTableData = () => {
   modeldata.table.tableLoading = true;
+  // modeldata.searchValue.workType = ''
   let obj = JSON.parse(JSON.stringify(modeldata.searchValue))
   obj.pageIndex = modeldata.table.pageIndex
   obj.pageSize = modeldata.table.pageSize
@@ -203,7 +228,26 @@ watch(
     },
     { deep: true, immediate: true }
 )
-
+const getEightWorkTypeFun = () => {
+    getEightWorkType().then((res)=>{
+    if(res.code === 200){
+        modeldata.dropdown.eightWorkType = res.body;
+    }else{
+        ElNotification({
+              title: 'Warning',
+              message: res.message?res.message:'服务器异常',
+              type: 'warning',
+            })
+            if(res.code === 100007 ||  res.code === 100008){
+                    store.dispatch('app/logout')
+                }
+    }
+  })
+}
+onBeforeMount(()=>{
+  getEightWorkTypeFun()
+  
+})
 //切换一页显示多少条数据
 const handleSizeChange = (val) => {
   modeldata.table.pageSize = val;
@@ -216,12 +260,12 @@ const handleCurrentChange = (val) => {
 };
 //新建
 const handleBuild = () => {
-  modeldata.dialog.title = modeldata.detail.isShow?'明细新建': "新建";
+  modeldata.dialog.title = "新建";
   modeldata.dialog.dialogEditVisible = true;
 };
 //编辑
 const handleEdit = (index, row) => {
-  modeldata.dialog.title =  modeldata.detail.isShow?'明细编辑': "编辑";
+  modeldata.dialog.title =   "编辑";
   modeldata.dialog.tableData = JSON.parse(JSON.stringify(row));
   modeldata.dialog.dialogEditVisible = true;
 };
@@ -230,7 +274,8 @@ const closeImg = ()=>{
 }
 //证件照
 const handleLook = (index,row)=>{
-  modeldata.imgurl = row.frontFileUrl;
+  modeldata.imgurlList = row.photoFile;
+  modeldata.imgurl = row.photoFile[0];
   modeldata.dialogimgVisible = true;
 }
 //返回
@@ -247,7 +292,7 @@ const handleDelete = (index, row) => {
     icon: markRaw(Delete),
   })
     .then(() => {
-      deleteDataDictionary(row.id).then((res)=>{
+      deleteCertificate(row.id).then((res)=>{
         if(res.code === 200){
             if(modeldata.table.tableData.length === 0&& modeldata.table.pageIndex>1){
               modeldata.table.pageIndex = modeldata.table.pageIndex -1;

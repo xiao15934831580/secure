@@ -43,41 +43,51 @@
                             v-model="dialogData.formData.operateProject"
                             />
                     </el-form-item>
-                    <el-form-item label="有效期" prop="startAndEndTime" required>
+                    <el-form-item label="有效期" prop="validityTime" required>
                         <el-date-picker
                               class="w-10 m-2 mr-16 float-left"
-                              v-model="dialogData.formData.startAndEndTime"
-                              type="daterange"
+                              v-model="dialogData.formData.validityTime"
+                              type="datetimerange"
                               start-placeholder="请选择开始日期"
                               end-placeholder="请选择结束日期"
                               :default-time="defaultTime"
                           />
                     </el-form-item>
                     <el-form-item label="签发机关" prop="signPlace" required>
-                            <el-select
+                            <el-input
+                            placeholder="请输入签发机关"
                             v-model="dialogData.formData.signPlace"
-                            placeholder="请选择部门"
-                            :remote="true"
-                            filterable
-                            clearable
-                            multiple
-                            >
-                                <el-option v-for="item in dialogData.dropdown.companyList" :key="item.id" :label="item.companyName" :value="item.id" required>
-                                </el-option>
-                            </el-select>
+                            />
                     </el-form-item>   
-                    <el-form-item label="证件照" prop="frontFileUrl" required>
+                    <el-form-item label="证件照（正面）" prop="frontFile" required>
                         <el-upload
-                                    v-model:file-list="dialogData.formData.frontFileUrl"
+                                    v-model:file-list="dialogData.formData.frontFile"
                                     action="api/hongyun-training/workpermit/uploadFile"
                                     list-type="picture-card"
-                                    :show-file-list="false"
                                     :limit="1"
                                     :beforeUpload="beforeAvatarUpload"          
                                     :on-exceed="handleImage"
+                                    :on-success="uploadSucceed_"
+                                >
+                                    <span>证件照(正面)</span>
+                                    <template #tip>
+                                        <div class="el-upload__tip">
+                                            只能上传jpg/png格式,且不超过500KB
+                                        </div>
+                                    </template>
+                                </el-upload>
+                    </el-form-item>
+                    <el-form-item label="证件照（背面）" prop="contraryFile" required>
+                        <el-upload
+                                    v-model:file-list="dialogData.formData.contraryFile"
+                                    action="api/hongyun-training/workpermit/uploadFile"
+                                    list-type="picture-card"
+                                    :limit="1"
+                                    :beforeUpload="beforeAvatarUpload"      
+                                    :on-exceed="handleImage"
                                     :on-success="uploadSucceed"
                                 >
-                                    <span>上传证件照</span>
+                                    <span>证件照(背面)</span>
                                     <template #tip>
                                         <div class="el-upload__tip">
                                             只能上传jpg/png格式,且不超过500KB
@@ -89,16 +99,36 @@
                 <div class="itemStyle">
                     <p class="titleName">关联信息</p>
                     <el-form-item label="关联八大作业" prop="workType" required>
-                        <el-input
+                        <!-- <el-input
                             placeholder="请选择关联八大作业"
                             v-model="dialogData.formData.workType"
-                        />
+                        /> -->
+                        <el-select
+                            v-model="dialogData.formData.workType"
+                            placeholder="请选择关联八大作业"
+                            :remote="true"
+                            filterable
+                            clearable
+                            >
+                                <el-option v-for="item in dialogData.dropdown.eightWorkType" :key="item.key" :label="item.value" :value="item.key" required>
+                                </el-option>
+                            </el-select>
                     </el-form-item>
-                    <el-form-item label="关联成员" prop="realName" required>
-                        <el-input
+                    <el-form-item label="关联成员" prop="userId" required>
+                        <!-- <el-input
                             placeholder="请选择成员"
-                            v-model="dialogData.formData.realName"
-                        />
+                            v-model="dialogData.formData.userId"
+                        /> -->
+                        <el-select
+                            v-model="dialogData.formData.userId"
+                            placeholder="请选择成员"
+                            :remote="true"
+                            filterable
+                            clearable
+                            >
+                                <el-option v-for="item in dialogData.dropdown.userList" :key="item.id" :label="item.realName" :value="item.id" required>
+                                </el-option>
+                            </el-select>
                     </el-form-item>
                 </div>        
             </div>
@@ -123,32 +153,36 @@
 <script  setup>
 import { defineProps, ref,onBeforeMount } from "vue";
 import { reactive, watch, defineEmits } from "vue";
-import { ElNotification  } from "element-plus";
-import { getCompanyList as getCompanyList } from '@/api/user.js'
+import { getymdhms} from '@/utils/auth'
+import { ElNotification ,ElMessage, ElMessageBox } from "element-plus";
+import {uploadFile as uploadFile} from '@/api//train.js'
+import { getCompanyList as getCompanyList,getEightWorkType as getEightWorkType, getUserList_ as getUserList_,operateCertificate as operateCertificate } from '@/api/user.js'
 const emits = defineEmits(["update:modelValue"]);
 const addform = ref('');
 const dialogData = reactive({
     formLabelWidth:"40%",
     rules:{
-        realName:[{ required: true, message: "请输入姓名", trigger: "blur" }],
-        userName:[{ required: true, message: "请输入账号", trigger: "blur" }],
-        phone:[{ required: true, message: "请输入手机号", trigger: "blur" }],
-        roleId:[{ required: true, message: "请选择角色", trigger: "change" }],
-        companyIds:[{ required: true, message: "请选择部门", trigger: "change" }],
-        status:[{ required: true, message: "请选择账号状态", trigger: "change" }],
-        cultivateType:[{ required: true, message: "请上传证件照", trigger: "change" }],
+        certificateNo:[{ required: true, message: "请输入证书编号", trigger: "blur" }],
+        workSort:[{ required: true, message: "请输入作业类别", trigger: "blur" }],
+        operateProject:[{ required: true, message: "请输入操作项目", trigger: "blur" }],
+        validityTime:[{ required: true, message: "请选择有效期", trigger: "change" }],
+        signPlace:[{ required: true, message: "请输入签发机关", trigger: "blur" }],
+        frontFile:[{ required: true, message: "请选择证件照（正面）", trigger: "change" }],
+        contraryFile:[{ required: true, message: "请选择证件照（背面面）", trigger: "change" }],
+        workType:[{ required: true, message: "请选择关联八大作业", trigger: "change" }],
+        userId:[{ required: true, message: "请选择成员", trigger: "change" }],
     },
     props:{
         title:'',
         dialogFormVisible:'',
     },
     formData:{
-        headline:'',
-        cultivateType:''
+        contraryFile:[],
+        frontFile:[]
     },
     dropdown:{
-      roleList:[{}],
-      companyList:[{}]
+      eightWorkType:[{}],
+      userList:[{}]
       },
 })
 let props = defineProps({
@@ -164,11 +198,26 @@ let props = defineProps({
   },
 });
 
-const getCompanyListFun = () => {
-  let companyName = dialogData.formData.companyIds;
-  getCompanyList(companyName).then((res)=>{
+const getEightWorkTypeFun = () => {
+    getEightWorkType().then((res)=>{
     if(res.code === 200){
-        dialogData.dropdown.companyList = res.body;
+        dialogData.dropdown.eightWorkType = res.body;
+    }else{
+        ElNotification({
+              title: 'Warning',
+              message: res.message?res.message:'服务器异常',
+              type: 'warning',
+            })
+            if(res.code === 100007 ||  res.code === 100008){
+                    store.dispatch('app/logout')
+                }
+    }
+  })
+}
+const getUserListFun = () => {
+  getUserList_().then((res)=>{
+    if(res.code === 200){
+        dialogData.dropdown.userList = res.body;
     }else{
         ElNotification({
               title: 'Warning',
@@ -182,15 +231,18 @@ const getCompanyListFun = () => {
   })
 }
 onBeforeMount(()=>{
-  getCompanyListFun()
+  getEightWorkTypeFun()
+  getUserListFun()
+
 })
 watch(
   () => props,
   () => {
     dialogData.props.title = props.dialogTitle;
-    dialogData.props.dialogFormVisible = props.dialogFormVisible;
+    dialogData.props.dialogFormVisible = props.  dialogFormVisible;
     if (dialogData.props.title === "编辑" ){
         dialogData.formData = props.dialogTableValue;
+        console.log(dialogData.formData)
     }else {
         dialogData.formData= {}
     }
@@ -208,11 +260,21 @@ const beforeAvatarUpload = (file)=>{
       }
 }
 const uploadSucceed = (file)=>{
+  dialogData.formData.contraryFile = []
     console.log(file)
     let obj = {
         url:file.body
     }
-    dialogData.formData.cultivateType.push(obj);
+    dialogData.formData.contraryFile.push(obj);
+}
+
+const uploadSucceed_ = (file)=>{
+  dialogData.formData.frontFile=[]
+    console.log(file)
+    let obj = {
+        url:file.body
+    }
+    dialogData.formData.frontFile.push(obj);
 }
 const  handleImage = (file)=>{
       //调用后台导入的接口
@@ -257,7 +319,9 @@ const success = (addform) => {
   addform.validate(async (valid) => {
     if (valid) {
       let obj = JSON.parse(JSON.stringify(dialogData.formData));
-      operatePlan(obj).then((res)=>{
+      obj.startTime = getymdhms(obj.validityTime[0]);
+      obj.endTime = getymdhms(obj.validityTime[1]);
+      operateCertificate(obj).then((res)=>{
         if(res.code ===200){
             close()
           }else{
